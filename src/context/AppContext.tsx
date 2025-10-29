@@ -4,6 +4,7 @@ import { File, Folder, EditorViewMode } from '../models/types';
 import { saveFiles, loadFiles, saveFolders, loadFolders } from '../services/storageService';
 import { createFile, createFolder, updateFileContent, renameFile } from '../services/fileService';
 import { createSeedData } from '../utils/seedData';
+import { buildKeywordIndex, KeywordIndex } from '../services/linkIndexService';
 
 interface AppContextType {
   // State
@@ -12,6 +13,7 @@ interface AppContextType {
   currentFileId: string | null;
   editorViewMode: EditorViewMode;
   showGraphView: boolean;
+  keywordIndex: KeywordIndex | null;
 
   // File operations
   createNewFile: (name: string, path: string, content?: string) => File;
@@ -31,6 +33,9 @@ interface AppContextType {
   // View settings
   setEditorViewMode: (mode: EditorViewMode) => void;
   toggleGraphView: () => void;
+
+  // Index management
+  rebuildIndex: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -41,6 +46,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [currentFileId, setCurrentFileId] = useState<string | null>(null);
   const [editorViewMode, setEditorViewMode] = useState<EditorViewMode>('edit');
   const [showGraphView, setShowGraphView] = useState(false);
+  const [keywordIndex, setKeywordIndex] = useState<KeywordIndex | null>(null);
 
   // Load data from storage on mount
   useEffect(() => {
@@ -81,6 +87,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
       saveFolders(folders);
     }
   }, [folders]);
+
+  // Build keyword index when files change
+  useEffect(() => {
+    if (files.size > 0) {
+      buildKeywordIndex(files).then(setKeywordIndex);
+    }
+  }, [files]);
+
+  // Function to manually rebuild index
+  const rebuildIndex = async () => {
+    if (files.size > 0) {
+      const index = await buildKeywordIndex(files);
+      setKeywordIndex(index);
+    }
+  };
 
   const createNewFile = (name: string, path: string, content: string = ''): File => {
     const newFile = createFile(name, path, content);
@@ -143,6 +164,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     currentFileId,
     editorViewMode,
     showGraphView,
+    keywordIndex,
     createNewFile,
     updateFile,
     deleteFile,
@@ -154,6 +176,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCurrentFile: setCurrentFileId,
     setEditorViewMode,
     toggleGraphView,
+    rebuildIndex,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

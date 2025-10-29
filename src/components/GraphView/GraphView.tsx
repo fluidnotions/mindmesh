@@ -16,7 +16,7 @@ interface GraphNode {
 
 export function GraphView() {
   const { t } = useTranslation();
-  const { files, currentFileId, showGraphView, toggleGraphView } = useApp();
+  const { files, currentFileId, showGraphView, toggleGraphView, keywordIndex, setCurrentFile } = useApp();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [graphData, setGraphData] = React.useState<ReturnType<typeof buildGraphData>>({ nodes: [], links: [] });
 
@@ -27,9 +27,9 @@ export function GraphView() {
   const [nodes, setNodes] = useState<GraphNode[]>([]);
 
   useEffect(() => {
-    const data = buildGraphData(files);
+    const data = buildGraphData(files, keywordIndex || undefined);
     setGraphData(data);
-  }, [files]);
+  }, [files, keywordIndex]);
 
   // Initialize node positions when graph data changes
   useEffect(() => {
@@ -178,6 +178,9 @@ export function GraphView() {
   }, [graphData, currentFileId, showGraphView, nodes, transform]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // Don't navigate if we're panning
+    if (isPanning) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -186,15 +189,16 @@ export function GraphView() {
     const mouseY = (e.clientY - rect.top - transform.y) / transform.scale;
 
     // Check if clicked on a node
-    nodes.forEach(node => {
+    for (const node of nodes) {
       const distance = Math.sqrt(Math.pow(mouseX - node.x, 2) + Math.pow(mouseY - node.y, 2));
-      const nodeRadius = node.id === currentFileId ? 8 : 6;
+      const nodeRadius = (node.id === currentFileId ? 8 : 6) / transform.scale;
 
-      if (distance < nodeRadius) {
-        console.log('Clicked node:', node.name);
-        // TODO: Navigate to file
+      if (distance < nodeRadius * 2) { // Give a larger hit area for easier clicking
+        // Navigate to the clicked file
+        setCurrentFile(node.id);
+        return;
       }
-    });
+    }
   };
 
   if (!showGraphView) {

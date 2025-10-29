@@ -14,21 +14,35 @@ interface PreviewProps {
 
 export function Preview({ content }: PreviewProps) {
   const { t } = useTranslation();
-  const { files, setCurrentFile, createNewFile, getCurrentFile } = useApp();
+  const { files, setCurrentFile, createNewFile, getCurrentFile, keywordIndex } = useApp();
   const currentFile = getCurrentFile();
 
-  // Helper to find file by name or path
-  const findFile = (nameOrPath: string) => {
-    // First try to find by exact path
-    const byPath = Array.from(files.values()).find(
-      (f) => f.path === nameOrPath || f.path === `/${nameOrPath}`
-    );
-    if (byPath) return byPath;
+  // Helper to find files by keyword or exact name/path
+  const findFilesByKeyword = (keyword: string): string[] => {
+    if (!keywordIndex) {
+      // Fallback to name matching if no index
+      const file = Array.from(files.values()).find(
+        (f) => f.name === keyword || f.path === keyword || f.path === `/${keyword}`
+      );
+      return file ? [file.id] : [];
+    }
 
-    // Then try to find by name
-    return Array.from(files.values()).find(
-      (f) => f.name === nameOrPath
-    );
+    // Use keyword index for matching
+    const matches = keywordIndex.keywordToFiles.get(keyword);
+    if (matches && matches.size > 0) {
+      return Array.from(matches);
+    }
+
+    // Try case-insensitive match
+    const lowerKeyword = keyword.toLowerCase();
+    const allMatches = new Set<string>();
+    keywordIndex.keywordToFiles.forEach((fileIds, indexedKeyword) => {
+      if (indexedKeyword.toLowerCase() === lowerKeyword) {
+        fileIds.forEach(id => allMatches.add(id));
+      }
+    });
+
+    return Array.from(allMatches);
   };
 
   // Parse wiki links and replace with placeholders for custom rendering
@@ -36,16 +50,15 @@ export function Preview({ content }: PreviewProps) {
     const linkRegex = /\[\[([^\]]+)\]\]/g;
     // Replace wiki links with markdown links temporarily
     return content.replace(linkRegex, (_match, linkRef) => {
-      const parsed = parseLinkReference(linkRef.trim());
-      const linkedFile = parsed.isPath && parsed.fullPath
-        ? findFile(parsed.fullPath) || findFile(parsed.name)
-        : findFile(parsed.name);
+      const keyword = linkRef.trim();
+      const matchingFileIds = findFilesByKeyword(keyword);
 
       // Use markdown link syntax with custom class identifier
-      const className = linkedFile ? 'wiki-exists' : 'wiki-missing';
-      return `[${linkRef}](wiki:${className}:${linkRef})`;
+      const className = matchingFileIds.length > 0 ? 'wiki-exists' : 'wiki-missing';
+      const count = matchingFileIds.length > 1 ? `[${matchingFileIds.length}]` : '';
+      return `[${linkRef}${count}](wiki:${className}:${linkRef})`;
     });
-  }, [content, files]);
+  }, [content, files, keywordIndex]);
 
   const handleClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -53,18 +66,12 @@ export function Preview({ content }: PreviewProps) {
       const linkRef = target.getAttribute('data-link');
       if (!linkRef) return;
 
-      const parsed = parseLinkReference(linkRef);
+      const keyword = linkRef.trim();
+      const matchingFileIds = findFilesByKeyword(keyword);
 
-      // Try to find existing file
-      const linkedFile = parsed.isPath && parsed.fullPath
-        ? findFile(parsed.fullPath) || findFile(parsed.name)
-        : findFile(parsed.name);
-
-      if (linkedFile) {
-        // Navigate to existing file
-        setCurrentFile(linkedFile.id);
-      } else {
-        // Create new file
+      if (matchingFileIds.length === 0) {
+        // No matching file - create new file
+        const parsed = parseLinkReference(keyword);
         const fileName = parsed.name;
         const filePath = parsed.fullPath || (currentFile ? `${getParentPath(currentFile.path)}/${fileName}` : `/${fileName}`);
 
@@ -72,6 +79,14 @@ export function Preview({ content }: PreviewProps) {
           const newFile = createNewFile(fileName, filePath, `# ${fileName}\n\n`);
           setCurrentFile(newFile.id);
         }
+      } else if (matchingFileIds.length === 1) {
+        // Single match - navigate to it
+        setCurrentFile(matchingFileIds[0]);
+      } else {
+        // Multiple matches - show a menu (for now, just navigate to the first)
+        // TODO: Show a dropdown or modal to select which file to open
+        console.log(`Multiple files match keyword "${keyword}":`, matchingFileIds);
+        setCurrentFile(matchingFileIds[0]);
       }
     }
   };

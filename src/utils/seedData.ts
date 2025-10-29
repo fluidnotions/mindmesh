@@ -63,22 +63,37 @@ This is a demo workspace with interconnected notes to showcase the features.
 ## Key Features
 
 1. **Hierarchical Folders** - Organize notes in nested folders
-2. **Wiki Links** - Connect notes using [[Note Name]] syntax
+2. **Wiki Links** - Connect notes using [[keyword]] syntax
 3. **Graph View** - Visualize connections between notes
 4. **Drag and Drop** - Move files between folders
 
+## How Wiki Links Work
+
+Links use double square brackets: \`[[keyword]]\`
+
+The keyword can match:
+- **Headings** in other files (# Heading)
+- **Bold text** in other files (**bold**)
+- **List items** in other files
+- File names
+
+One keyword can link to multiple files! Try these:
+
+- [[JavaScript]] - Links to any file containing "JavaScript" in headings
+- [[React]] - Links to files about React
+- [[Programming]] - Shows all programming-related files
+- [[Variables]] - Find notes discussing variables
+
 ## Explore the Demo
 
-Check out these connected notes:
-
-- [[JavaScript Basics]] - Start learning JavaScript
-- [[React Hooks]] - Modern React patterns
 - [[My Learning Journey]] - Personal reflections
+- [[Functions]] - Programming concept that appears in multiple files
+- [[useState]] - React Hook mentioned in examples
 
-Try clicking the links above to navigate, or use the **Graph** button to see all connections!`,
+Click the **Graph** button to see all connections!`,
     created: now,
     modified: now,
-    links: ['JavaScript Basics', 'React Hooks', 'My Learning Journey'],
+    links: ['JavaScript', 'React', 'Programming', 'Variables', 'My Learning Journey', 'Functions', 'useState'],
   };
 
   const jsBasicsFile: File = {

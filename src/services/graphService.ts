@@ -1,13 +1,17 @@
 // Graph data generation service
 import { File, GraphData, GraphNode, GraphLink } from '../models/types';
+import { KeywordIndex, findFilesWithKeyword } from './linkIndexService';
 
 /**
- * Build graph data from files and their links
+ * Build graph data from files and their links using keyword matching
  */
-export function buildGraphData(files: Map<string, File>): GraphData {
+export function buildGraphData(
+  files: Map<string, File>,
+  keywordIndex?: KeywordIndex
+): GraphData {
   const nodes: GraphNode[] = [];
   const links: GraphLink[] = [];
-  const fileNameToId = new Map<string, string>();
+  const linkSet = new Set<string>(); // Prevent duplicate links
 
   // Create nodes for all files
   files.forEach((file) => {
@@ -15,19 +19,53 @@ export function buildGraphData(files: Map<string, File>): GraphData {
       id: file.id,
       name: file.name,
     });
-    fileNameToId.set(file.name, file.id);
   });
 
-  // Create links based on wiki-style references
+  // If no keyword index provided, fall back to filename matching
+  if (!keywordIndex) {
+    const fileNameToId = new Map<string, string>();
+    files.forEach((file) => {
+      fileNameToId.set(file.name, file.id);
+    });
+
+    files.forEach((file) => {
+      file.links.forEach((linkedFileName) => {
+        const targetId = fileNameToId.get(linkedFileName);
+        if (targetId && file.id !== targetId) {
+          const linkKey = `${file.id}->${targetId}`;
+          if (!linkSet.has(linkKey)) {
+            links.push({
+              source: file.id,
+              target: targetId,
+            });
+            linkSet.add(linkKey);
+          }
+        }
+      });
+    });
+
+    return { nodes, links };
+  }
+
+  // Create links based on keyword matching
   files.forEach((file) => {
-    file.links.forEach((linkedFileName) => {
-      const targetId = fileNameToId.get(linkedFileName);
-      if (targetId) {
-        links.push({
-          source: file.id,
-          target: targetId,
-        });
-      }
+    file.links.forEach((keyword) => {
+      // Find all files that contain this keyword
+      const matchingFileIds = findFilesWithKeyword(keyword, keywordIndex);
+
+      matchingFileIds.forEach((targetId) => {
+        // Don't link to self
+        if (file.id !== targetId) {
+          const linkKey = `${file.id}->${targetId}`;
+          if (!linkSet.has(linkKey)) {
+            links.push({
+              source: file.id,
+              target: targetId,
+            });
+            linkSet.add(linkKey);
+          }
+        }
+      });
     });
   });
 
