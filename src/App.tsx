@@ -5,6 +5,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { FileExplorer } from './components/FileExplorer/FileExplorer';
 import { Editor } from './components/Editor/Editor';
 import { GraphView } from './components/GraphView/GraphView';
+import { LanguageSwitcher } from './components/LanguageSwitcher/LanguageSwitcher';
 import { NotesAppFacade } from './api/NotesAppFacade';
 import './App.css';
 
@@ -39,12 +40,17 @@ function AppContent({ facade }: { facade?: NotesAppFacade }) {
 
   return (
     <div className="app">
-      <FileExplorer />
-      <Editor />
-      <GraphView />
-      <button className="btn-toggle-graph" onClick={toggleGraphView}>
-        📊 {t('graphView.title')}
-      </button>
+      <div className="app-header">
+        <LanguageSwitcher />
+      </div>
+      <div className="app-main">
+        <FileExplorer />
+        <Editor />
+        <GraphView />
+        <button className="btn-toggle-graph" onClick={toggleGraphView}>
+          📊 {t('graphView.title')}
+        </button>
+      </div>
     </div>
   );
 }

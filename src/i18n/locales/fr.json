@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "Application de Notes"
+  },
+  "fileExplorer": {
+    "title": "Fichiers",
+    "newNote": "Nouvelle Note",
+    "searchPlaceholder": "Rechercher des fichiers...",
+    "newFile": "Nouveau Fichier",
+    "newFolder": "Nouveau Dossier",
+    "createFileIn": "Créer un fichier dans {{folderName}}",
+    "createSubfolderIn": "Créer un sous-dossier dans {{folderName}}",
+    "enterFileName": "Entrez le nom du fichier :",
+    "enterFolderName": "Entrez le nom du dossier :",
+    "deleteConfirm": "Supprimer \"{{name}}\" ?",
+    "cannotDeleteNonEmptyFolder": "Impossible de supprimer un dossier non vide. Veuillez d'abord supprimer son contenu.",
+    "noFiles": "Aucun fichier trouvé"
+  },
+  "editor": {
+    "noFileSelected": "Aucun fichier sélectionné",
+    "selectFilePrompt": "Sélectionnez un fichier dans l'explorateur ou créez-en un nouveau",
+    "editMode": "Éditer",
+    "previewMode": "Aperçu",
+    "splitMode": "Divisé",
+    "saved": "Enregistré",
+    "saving": "Enregistrement...",
+    "unsaved": "Non enregistré",
+    "placeholder": "Commencez à taper... Utilisez [[Nom de Note]] pour créer un lien vers d'autres notes"
+  },
+  "graphView": {
+    "title": "Vue Graphique",
+    "noConnections": "Aucune connexion pour le moment",
+    "createLinksPrompt": "Créez des liens entre les notes en utilisant [[Nom de Note]]",
+    "stats": "{{noteCount}} notes • {{linkCount}} connexions",
+    "reset": "Réinitialiser",
+    "zoomHelp": "Faire défiler pour zoomer • Clic central et glisser pour déplacer"
+  },
+  "preview": {
+    "noteDoesntExist": "La note \"{{noteName}}\" n'existe pas. La créer ?",
+    "createNote": "Créer"
+  },
+  "breadcrumb": {
+    "root": "Racine"
+  },
+  "button": {
+    "create": "Créer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "close": "Fermer",
+    "reset": "Réinitialiser"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "notes": "notes",
+    "connections": "connexions",
+    "files": "fichiers",
+    "folders": "dossiers"
+  }
+}

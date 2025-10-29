@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "Aplicación de Notas"
+  },
+  "fileExplorer": {
+    "title": "Archivos",
+    "newNote": "Nueva Nota",
+    "searchPlaceholder": "Buscar archivos...",
+    "newFile": "Nuevo Archivo",
+    "newFolder": "Nueva Carpeta",
+    "createFileIn": "Crear archivo en {{folderName}}",
+    "createSubfolderIn": "Crear subcarpeta en {{folderName}}",
+    "enterFileName": "Ingrese el nombre del archivo:",
+    "enterFolderName": "Ingrese el nombre de la carpeta:",
+    "deleteConfirm": "¿Eliminar \"{{name}}\"?",
+    "cannotDeleteNonEmptyFolder": "No se puede eliminar una carpeta que no está vacía. Elimine su contenido primero.",
+    "noFiles": "No se encontraron archivos"
+  },
+  "editor": {
+    "noFileSelected": "Ningún archivo seleccionado",
+    "selectFilePrompt": "Seleccione un archivo del explorador o cree uno nuevo",
+    "editMode": "Editar",
+    "previewMode": "Vista Previa",
+    "splitMode": "Dividido",
+    "saved": "Guardado",
+    "saving": "Guardando...",
+    "unsaved": "Sin guardar",
+    "placeholder": "Empiece a escribir... Use [[Nombre de Nota]] para vincular a otras notas"
+  },
+  "graphView": {
+    "title": "Vista de Grafo",
+    "noConnections": "Aún no hay conexiones",
+    "createLinksPrompt": "Cree enlaces entre notas usando [[Nombre de Nota]]",
+    "stats": "{{noteCount}} notas • {{linkCount}} conexiones",
+    "reset": "Restablecer",
+    "zoomHelp": "Desplazar para zoom • Clic central y arrastrar para mover"
+  },
+  "preview": {
+    "noteDoesntExist": "La nota \"{{noteName}}\" no existe. ¿Crearla?",
+    "createNote": "Crear"
+  },
+  "breadcrumb": {
+    "root": "Raíz"
+  },
+  "button": {
+    "create": "Crear",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "reset": "Restablecer"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "notes": "notas",
+    "connections": "conexiones",
+    "files": "archivos",
+    "folders": "carpetas"
+  }
+}
