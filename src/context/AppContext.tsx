@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { File, Folder, EditorViewMode } from '../models/types';
 import { saveFiles, loadFiles, saveFolders, loadFolders } from '../services/storageService';
 import { createFile, createFolder, updateFileContent, renameFile } from '../services/fileService';
+import { createSeedData } from '../utils/seedData';
 
 interface AppContextType {
   // State
@@ -45,20 +46,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loadedFiles = loadFiles();
     const loadedFolders = loadFolders();
-    setFiles(loadedFiles);
-    setFolders(loadedFolders);
 
-    // Create a welcome file if no files exist
+    // Load seed data if no files exist
     if (loadedFiles.size === 0) {
-      const welcomeFile = createFile(
-        'Welcome',
-        '/Welcome',
-        '# Welcome to Obsidian Clone\n\nStart creating notes and link them using [[Note Name]] syntax.\n\nTry creating a new note and linking to it!'
-      );
-      const newFiles = new Map([[welcomeFile.id, welcomeFile]]);
-      setFiles(newFiles);
-      setCurrentFileId(welcomeFile.id);
-      saveFiles(newFiles);
+      const seedData = createSeedData();
+      setFiles(seedData.files);
+      setFolders(seedData.folders);
+
+      // Set the first file as current
+      const firstFile = Array.from(seedData.files.values())[0];
+      if (firstFile) {
+        setCurrentFileId(firstFile.id);
+      }
+
+      // Save to storage
+      saveFiles(seedData.files);
+      saveFolders(seedData.folders);
+    } else {
+      setFiles(loadedFiles);
+      setFolders(loadedFolders);
     }
   }, []);
 

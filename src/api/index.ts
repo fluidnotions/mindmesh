@@ -2,9 +2,9 @@
 
 export { NotesAppFacade, notesApp } from './NotesAppFacade';
 export { NotesAppEventEmitter } from './EventEmitter';
+export { NotesAppEvent } from './types';
 export type {
   NotesAppConfig,
-  NotesAppEvent,
   NotesAppEventMap,
   WorkspaceData,
   FileQueryOptions,

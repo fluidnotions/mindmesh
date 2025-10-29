@@ -29,20 +29,19 @@ export function Preview({ content }: PreviewProps) {
     );
   };
 
-  // Custom renderer for wiki-style links
+  // Parse wiki links and replace with placeholders for custom rendering
   const processedContent = React.useMemo(() => {
     const linkRegex = /\[\[([^\]]+)\]\]/g;
+    // Replace wiki links with markdown links temporarily
     return content.replace(linkRegex, (_match, linkRef) => {
       const parsed = parseLinkReference(linkRef.trim());
       const linkedFile = parsed.isPath && parsed.fullPath
         ? findFile(parsed.fullPath) || findFile(parsed.name)
         : findFile(parsed.name);
 
-      if (linkedFile) {
-        return `<span class="wiki-link wiki-link-exists" data-link="${linkRef.trim()}">${linkRef}</span>`;
-      } else {
-        return `<span class="wiki-link wiki-link-missing" data-link="${linkRef.trim()}">${linkRef}</span>`;
-      }
+      // Use markdown link syntax with custom class identifier
+      const className = linkedFile ? 'wiki-exists' : 'wiki-missing';
+      return `[${linkRef}](wiki:${className}:${linkRef})`;
     });
   }, [content, files]);
 
@@ -80,7 +79,26 @@ export function Preview({ content }: PreviewProps) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          // Custom rendering can be added here if needed
+          a: ({ node, href, children, ...props }) => {
+            // Check if this is a wiki link
+            if (href?.startsWith('wiki:')) {
+              const parts = href.split(':');
+              const className = parts[1]; // 'wiki-exists' or 'wiki-missing'
+              const linkRef = parts.slice(2).join(':'); // Original link text
+
+              return (
+                <span
+                  className={`wiki-link wiki-link-${className === 'wiki-exists' ? 'exists' : 'missing'}`}
+                  data-link={linkRef}
+                  {...props}
+                >
+                  {children}
+                </span>
+              );
+            }
+            // Regular markdown link
+            return <a href={href} {...props}>{children}</a>;
+          },
         }}
       >
         {processedContent}
