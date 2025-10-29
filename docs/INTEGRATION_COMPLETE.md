@@ -49,10 +49,10 @@ All three feature branches have been successfully developed in parallel, merged 
 
 ### Worktrees
 ```
-/home/justin/Documents/dev/workspaces/obclone                     [main]
-/home/justin/Documents/dev/workspaces/obclone-worktrees/feature-folders
-/home/justin/Documents/dev/workspaces/obclone-worktrees/feature-api-facade
-/home/justin/Documents/dev/workspaces/obclone-worktrees/feature-dynamodb-storage
+/home/justin/Documents/dev/workspaces/mindmesh                     [main]
+/home/justin/Documents/dev/workspaces/mindmesh-worktrees/feature-folders
+/home/justin/Documents/dev/workspaces/mindmesh-worktrees/feature-api-facade
+/home/justin/Documents/dev/workspaces/mindmesh-worktrees/feature-dynamodb-storage
 ```
 
 ---
@@ -448,7 +448,7 @@ notesApp.mount(container, {
 ### For Users (Standalone App)
 ```bash
 git clone <repo-url>
-cd obclone
+cd mindmesh
 npm install
 npm run dev
 # Open http://localhost:5173
@@ -533,8 +533,8 @@ All three features were developed simultaneously using git worktrees:
 ### Worktree Strategy
 ```bash
 # Feature branches in separate worktrees
-../obclone/                      # main branch
-../obclone-worktrees/
+../mindmesh/                      # main branch
+../mindmesh-worktrees/
   ├── feature-folders/           # Folder UI
   ├── feature-api-facade/        # Public API
   └── feature-dynamodb-storage/  # Cloud backend

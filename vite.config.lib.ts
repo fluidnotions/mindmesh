@@ -16,9 +16,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'ObClone',
+      name: 'MindMesh',
       formats: ['es', 'umd'],
-      fileName: (format) => `obclone.${format}.js`,
+      fileName: (format) => `mindmesh.${format}.js`,
     },
     rollupOptions: {
       // Externalize dependencies that shouldn't be bundled
@@ -31,7 +31,7 @@ export default defineConfig({
         },
         // Preserve CSS
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name === 'style.css') return 'obclone.css';
+          if (assetInfo.name === 'style.css') return 'mindmesh.css';
           return assetInfo.name || '';
         },
       },

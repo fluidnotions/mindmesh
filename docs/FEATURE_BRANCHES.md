@@ -5,7 +5,7 @@ This document tracks the parallel development efforts across multiple feature br
 ## Active Branches
 
 ### 1. `feature/folders` - Hierarchical Folder Structure
-**Location:** `../obclone-worktrees/feature-folders`
+**Location:** `../mindmesh-worktrees/feature-folders`
 
 **Objective:** Implement true hierarchical folder navigation with tree UI
 
@@ -28,7 +28,7 @@ This document tracks the parallel development efforts across multiple feature br
 ---
 
 ### 2. `feature/api-facade` - Public Integration API
-**Location:** `../obclone-worktrees/feature-api-facade`
+**Location:** `../mindmesh-worktrees/feature-api-facade`
 
 **Objective:** Create a clean facade API for embedding this app into other applications
 
@@ -85,7 +85,7 @@ class NotesAppFacade {
 ---
 
 ### 3. `feature/dynamodb-storage` - DynamoDB Backend
-**Location:** `../obclone-worktrees/feature-dynamodb-storage`
+**Location:** `../mindmesh-worktrees/feature-dynamodb-storage`
 
 **Objective:** Replace LocalStorage with DynamoDB for multi-user cloud storage
 
@@ -134,9 +134,9 @@ Option 2: PK=USER#{userId}, SK=FILE#{fileId} | FOLDER#{folderId}
 ### Checking Out Branches
 Each branch has its own worktree directory:
 ```bash
-cd ../obclone-worktrees/feature-folders
-cd ../obclone-worktrees/feature-api-facade
-cd ../obclone-worktrees/feature-dynamodb-storage
+cd ../mindmesh-worktrees/feature-folders
+cd ../mindmesh-worktrees/feature-api-facade
+cd ../mindmesh-worktrees/feature-dynamodb-storage
 ```
 
 ### List All Worktrees
@@ -155,7 +155,7 @@ git merge feature/dynamodb-storage
 
 ### Removing Worktrees (when done)
 ```bash
-git worktree remove ../obclone-worktrees/feature-folders
+git worktree remove ../mindmesh-worktrees/feature-folders
 git branch -d feature/folders
 ```
 

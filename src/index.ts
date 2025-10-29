@@ -47,4 +47,4 @@ export { extractLinks, parseLinkReference, hasLink } from './utils/linkParser';
 export { default as i18n } from './i18n/config';
 
 // CSS - users must import this separately
-// import 'obclone/dist/obclone.css';
+// import '@fluidnotions/mindmesh/css';

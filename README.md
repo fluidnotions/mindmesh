@@ -1,15 +1,18 @@
-# Obsidian Clone - Note Taking Application
+# MindMesh - Note Taking Application
 
-A minimal React-based note-taking application inspired by Obsidian, featuring wiki-style linking between documents, visual graph representation of connections, and a file explorer interface.
+A minimal React-based note-taking application inspired by Obsidian, featuring keyword-based wiki linking, visual graph representation of connections, and a file explorer interface. Can be used as a standalone app or embedded as a library.
 
 ## Features
 
 - **File Explorer**: Left sidebar with file management (create, delete, search files)
 - **Markdown Editor**: Central editing area with multiple view modes (edit, preview, split)
-- **Wiki-Style Linking**: Bidirectional linking using `[[note-name]]` syntax
-- **Graph Visualization**: Interactive graph showing document relationships
+- **Keyword-Based Wiki Linking**: Link to any file containing a keyword using `[[keyword]]` syntax
+- **Interactive Graph Visualization**: Visual graph showing document relationships with zoom, pan, and click-to-navigate
+- **IndexedDB Caching**: Fast keyword indexing with incremental updates
 - **Auto-save**: Automatic saving with debounce (500ms)
-- **Local Storage**: Persistent storage using browser LocalStorage
+- **Multiple Storage Backends**: LocalStorage, DynamoDB, or custom storage implementations
+- **Internationalization**: Multi-language support (English, Spanish, French)
+- **Library Mode**: Use as a standalone app or embed in your own React application
 
 ## Technology Stack
 
@@ -43,8 +46,19 @@ npm run dev
 
 ### Build for Production
 
+#### Standalone App
 ```bash
 npm run build
+```
+
+#### Library Package
+```bash
+npm run build:lib
+```
+
+#### Both
+```bash
+npm run build:all
 ```
 
 The built files will be in the `dist` directory.
@@ -54,6 +68,24 @@ The built files will be in the `dist` directory.
 ```bash
 npm run preview
 ```
+
+## Using as a Library
+
+See [LIBRARY_USAGE.md](./LIBRARY_USAGE.md) for complete documentation on using MindMesh as an embeddable library.
+
+### Quick Example
+
+```typescript
+import { NotesAppFacade } from '@fluidnotions/mindmesh';
+import '@fluidnotions/mindmesh/css';
+
+const notesApp = new NotesAppFacade();
+notesApp.mount(document.getElementById('app'));
+```
+
+## Publishing
+
+See [PUBLISHING.md](./PUBLISHING.md) and [GITHUB_PACKAGES_SETUP.md](./GITHUB_PACKAGES_SETUP.md) for instructions on publishing to GitHub Packages.
 
 ## Usage
 

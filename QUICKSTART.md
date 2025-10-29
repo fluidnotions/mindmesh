@@ -1,8 +1,8 @@
-# ObClone Quick Start
+# MindMesh Quick Start
 
-## What is ObClone?
+## What is MindMesh?
 
-ObClone is an Obsidian-like note-taking library with:
+MindMesh is an Obsidian-like note-taking library with:
 - **Wiki Links**: `[[keyword]]` connects notes via content keywords
 - **Graph View**: Visualize note connections with zoom/pan
 - **Hierarchical Folders**: Organize notes in nested folders
@@ -28,12 +28,12 @@ Open http://localhost:5173 - the app runs standalone!
 Install as a package and embed:
 
 ```bash
-npm install @your-username/obclone
+npm install @fluidnotions/mindmesh
 ```
 
 ```typescript
-import { App, AppProvider } from '@your-username/obclone';
-import '@your-username/obclone/css';
+import { App, AppProvider } from '@fluidnotions/mindmesh';
+import '@fluidnotions/mindmesh/css';
 
 function MyApp() {
   return (
@@ -49,7 +49,7 @@ function MyApp() {
 Control the app programmatically:
 
 ```typescript
-import { NotesAppFacade } from '@your-username/obclone';
+import { NotesAppFacade } from '@fluidnotions/mindmesh';
 
 const notesApp = new NotesAppFacade();
 notesApp.mount(document.getElementById('root'));
@@ -67,7 +67,7 @@ notesApp.on('file:created', (event) => {
 
 ### One-Time Setup
 
-1. **Update package.json** - Replace `@your-username` with your GitHub username
+1. **Update package.json** - Replace `@fluidnotions` with your GitHub username
 
 2. **Create GitHub Token**
    - Go to GitHub Settings → Developer settings → Personal access tokens
@@ -130,7 +130,7 @@ If `[[JavaScript]]` appears in 3 files, the link shows:
 
 **DynamoDB**
 ```typescript
-import { DynamoDBStorage } from '@your-username/obclone';
+import { DynamoDBStorage } from '@fluidnotions/mindmesh';
 
 const storage = new DynamoDBStorage({
   region: 'us-east-1',
@@ -164,9 +164,9 @@ src/
   i18n/                 # Internationalization
 
 dist/                   # Build output (library)
-  obclone.es.js         # ESM bundle
-  obclone.umd.js        # UMD bundle
-  obclone.css           # Styles
+  mindmesh.es.js         # ESM bundle
+  mindmesh.umd.js        # UMD bundle
+  mindmesh.css           # Styles
   index.d.ts            # Types
 ```
 

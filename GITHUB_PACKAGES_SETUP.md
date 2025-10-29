@@ -37,14 +37,14 @@ Token will look like: `ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 
 ## Step 2: Update package.json
 
-Open `package.json` and replace `@your-username` with **your actual GitHub username**:
+Open `package.json` and replace `@fluidnotions` with **your actual GitHub username**:
 
 ```json
 {
-  "name": "@YOUR_GITHUB_USERNAME/obclone",
+  "name": "@fluidnotions/mindmesh",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_GITHUB_USERNAME/obclone.git"
+    "url": "https://github.com/fluidnotions/mindmesh.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -53,9 +53,9 @@ Open `package.json` and replace `@your-username` with **your actual GitHub usern
 ```
 
 **Important**:
-- The package name MUST be scoped with `@YOUR_GITHUB_USERNAME/`
+- The package name MUST be scoped with `@fluidnotions/`
 - Username is case-sensitive
-- Example: If your GitHub username is `JohnDoe`, use `@JohnDoe/obclone`
+- Example: If your GitHub username is `JohnDoe`, use `@JohnDoe/mindmesh`
 
 ## Step 3: Configure npm Locally
 
@@ -67,7 +67,7 @@ Create or edit `~/.npmrc` (your home directory):
 
 ```bash
 # On Linux/Mac
-echo "@YOUR_GITHUB_USERNAME:registry=https://npm.pkg.github.com" >> ~/.npmrc
+echo "@fluidnotions:registry=https://npm.pkg.github.com" >> ~/.npmrc
 echo "//npm.pkg.github.com/:_authToken=YOUR_PERSONAL_ACCESS_TOKEN" >> ~/.npmrc
 
 # Or edit manually
@@ -79,7 +79,7 @@ vim ~/.npmrc
 Add these lines (replace with your actual values):
 
 ```
-@YOUR_GITHUB_USERNAME:registry=https://npm.pkg.github.com
+@fluidnotions:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=ghp_your_token_here
 ```
 
@@ -88,7 +88,7 @@ Add these lines (replace with your actual values):
 Create `.npmrc` in your project directory:
 
 ```
-@YOUR_GITHUB_USERNAME:registry=https://npm.pkg.github.com
+@fluidnotions:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 ```
 
@@ -104,7 +104,7 @@ If you haven't already:
 
 1. Go to GitHub.com
 2. Click **+** (top right) → **New repository**
-3. Name: `obclone` (or your chosen name)
+3. Name: `mindmesh` (or your chosen name)
 4. Choose **Private** for private packages
 5. Click **Create repository**
 
@@ -117,7 +117,7 @@ git add -A
 git commit -m "Initial commit"
 
 # Add GitHub remote
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/obclone.git
+git remote add origin https://github.com/fluidnotions/mindmesh.git
 
 # Push to GitHub
 git branch -M main
@@ -137,9 +137,9 @@ ls -la dist/
 ```
 
 You should see:
-- `obclone.es.js`
-- `obclone.umd.js`
-- `obclone.css`
+- `mindmesh.es.js`
+- `mindmesh.umd.js`
+- `mindmesh.css`
 - `index.d.ts`
 
 ### 5.2 Publish
@@ -155,18 +155,18 @@ npm publish --access restricted  # For private packages
 You'll see output like:
 ```
 npm notice Publishing to https://npm.pkg.github.com
-+ @YOUR_GITHUB_USERNAME/obclone@1.0.0
++ @fluidnotions/mindmesh@1.0.0
 ```
 
 ### 5.3 Verify Publication
 
 Go to your GitHub profile:
 - Click **Packages** tab
-- You should see `obclone` listed!
+- You should see `mindmesh` listed!
 
 Or check via command line:
 ```bash
-npm view @YOUR_GITHUB_USERNAME/obclone
+npm view @fluidnotions/mindmesh
 ```
 
 ## Step 6: Install in Another Project
@@ -177,21 +177,21 @@ In the project where you want to USE the package:
 
 ```bash
 # Create/edit .npmrc in that project
-echo "@YOUR_GITHUB_USERNAME:registry=https://npm.pkg.github.com" >> .npmrc
+echo "@fluidnotions:registry=https://npm.pkg.github.com" >> .npmrc
 echo "//npm.pkg.github.com/:_authToken=YOUR_PERSONAL_ACCESS_TOKEN" >> .npmrc
 ```
 
 ### 6.2 Install the Package
 
 ```bash
-npm install @YOUR_GITHUB_USERNAME/obclone
+npm install @fluidnotions/mindmesh
 ```
 
 ### 6.3 Use It
 
 ```typescript
-import { App, AppProvider } from '@YOUR_GITHUB_USERNAME/obclone';
-import '@YOUR_GITHUB_USERNAME/obclone/css';
+import { App, AppProvider } from '@fluidnotions/mindmesh';
+import '@fluidnotions/mindmesh/css';
 
 function MyApp() {
   return (
@@ -293,7 +293,7 @@ cat ~/.npmrc | grep registry
 **Fix**:
 ```bash
 npm login --registry=https://npm.pkg.github.com
-# Username: YOUR_GITHUB_USERNAME
+# Username: fluidnotions
 # Password: YOUR_PERSONAL_ACCESS_TOKEN
 # Email: your@email.com
 ```
@@ -329,19 +329,19 @@ npm run build:lib
 npm publish
 
 # View package info
-npm view @YOUR_USERNAME/obclone
+npm view @YOUR_USERNAME/mindmesh
 
 # List all versions
-npm view @YOUR_USERNAME/obclone versions
+npm view @YOUR_USERNAME/mindmesh versions
 
 # Install in another project
-npm install @YOUR_USERNAME/obclone
+npm install @YOUR_USERNAME/mindmesh
 
 # Unpublish specific version (within 72 hours)
-npm unpublish @YOUR_USERNAME/obclone@1.0.0
+npm unpublish @YOUR_USERNAME/mindmesh@1.0.0
 
 # Delete entire package
-npm unpublish @YOUR_USERNAME/obclone --force
+npm unpublish @YOUR_USERNAME/mindmesh --force
 ```
 
 ## Next Steps

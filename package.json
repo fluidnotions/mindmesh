@@ -1,18 +1,18 @@
 {
-  "name": "@fluidnotions/obclone",
+  "name": "@fluidnotions/mindmesh",
   "version": "1.0.0",
   "description": "Obsidian-like note-taking app with wiki links, graph view, and keyword-based linking",
   "type": "module",
-  "main": "./dist/obclone.umd.js",
-  "module": "./dist/obclone.es.js",
+  "main": "./dist/mindmesh.umd.js",
+  "module": "./dist/mindmesh.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/obclone.es.js",
-      "require": "./dist/obclone.umd.js",
+      "import": "./dist/mindmesh.es.js",
+      "require": "./dist/mindmesh.umd.js",
       "types": "./dist/index.d.ts"
     },
-    "./css": "./dist/obclone.css"
+    "./css": "./dist/mindmesh.css"
   },
   "files": [
     "dist",
@@ -31,7 +31,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/obclone.git"
+    "url": "https://github.com/fluidnotions/mindmesh.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

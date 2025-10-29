@@ -1,6 +1,6 @@
-# ObClone Library Usage Guide
+# MindMesh Library Usage Guide
 
-ObClone can be used both as a standalone application and as an embeddable library in your React applications.
+MindMesh can be used both as a standalone application and as an embeddable library in your React applications.
 
 ## Installation
 
@@ -8,22 +8,22 @@ ObClone can be used both as a standalone application and as an embeddable librar
 
 ```bash
 # Configure npm to use GitHub Packages
-echo "@your-username:registry=https://npm.pkg.github.com" >> .npmrc
+echo "@fluidnotions:registry=https://npm.pkg.github.com" >> .npmrc
 echo "//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN" >> .npmrc
 
 # Install the package
-npm install @your-username/obclone
+npm install @fluidnotions/mindmesh
 ```
 
 ### From Local Development
 
 ```bash
-# In the obclone directory
+# In the mindmesh directory
 npm run build:lib
 npm link
 
 # In your project
-npm link @your-username/obclone
+npm link @fluidnotions/mindmesh
 ```
 
 ## Usage Modes
@@ -33,8 +33,8 @@ npm link @your-username/obclone
 Use the facade API for headless integration and programmatic control.
 
 ```typescript
-import { NotesAppFacade, NotesAppEvent } from '@your-username/obclone';
-import '@your-username/obclone/css';
+import { NotesAppFacade, NotesAppEvent } from '@fluidnotions/mindmesh';
+import '@fluidnotions/mindmesh/css';
 
 // Create instance
 const notesApp = new NotesAppFacade();
@@ -72,8 +72,8 @@ notesApp.unmount();
 Embed the app as React components in your application.
 
 ```typescript
-import { App, AppProvider, useApp } from '@your-username/obclone';
-import '@your-username/obclone/css';
+import { App, AppProvider, useApp } from '@fluidnotions/mindmesh';
+import '@fluidnotions/mindmesh/css';
 
 function MyApp() {
   return (
@@ -84,7 +84,7 @@ function MyApp() {
 }
 
 // Or use individual components
-import { FileExplorer, Editor, GraphView } from '@your-username/obclone';
+import { FileExplorer, Editor, GraphView } from '@fluidnotions/mindmesh';
 
 function CustomLayout() {
   return (
@@ -104,7 +104,7 @@ function CustomLayout() {
 Provide your own storage implementation.
 
 ```typescript
-import { NotesAppFacade, StorageBackend, WorkspaceData } from '@your-username/obclone';
+import { NotesAppFacade, StorageBackend, WorkspaceData } from '@fluidnotions/mindmesh';
 
 class MyCustomStorage implements StorageBackend {
   async loadWorkspace(userId: string): Promise<WorkspaceData> {
@@ -133,7 +133,7 @@ const notesApp = new NotesAppFacade({
 Use the built-in DynamoDB storage.
 
 ```typescript
-import { NotesAppFacade, DynamoDBStorage } from '@your-username/obclone';
+import { NotesAppFacade, DynamoDBStorage } from '@fluidnotions/mindmesh';
 
 const storage = new DynamoDBStorage({
   region: 'us-east-1',
@@ -157,7 +157,7 @@ const notesApp = new NotesAppFacade({
 Access and manipulate the keyword index:
 
 ```typescript
-import { buildKeywordIndex } from '@your-username/obclone';
+import { buildKeywordIndex } from '@fluidnotions/mindmesh';
 
 const files = new Map(/* your files */);
 const index = await buildKeywordIndex(files);
@@ -172,7 +172,7 @@ console.log('Files containing "JavaScript":', filesWithKeyword);
 Build and query graph data:
 
 ```typescript
-import { buildGraphData, getConnectedSubgraph } from '@your-username/obclone';
+import { buildGraphData, getConnectedSubgraph } from '@fluidnotions/mindmesh';
 
 const files = new Map(/* your files */);
 const keywordIndex = await buildKeywordIndex(files);
@@ -189,7 +189,7 @@ const subgraph = getConnectedSubgraph(graphData, fileId, 2); // 2 degrees
 Parse and extract wiki links:
 
 ```typescript
-import { extractLinks, parseLinkReference } from '@your-username/obclone';
+import { extractLinks, parseLinkReference } from '@fluidnotions/mindmesh';
 
 const content = `
 # My Note
@@ -210,7 +210,7 @@ console.log(parsed);
 Configure language:
 
 ```typescript
-import { i18n } from '@your-username/obclone';
+import { i18n } from '@fluidnotions/mindmesh';
 
 // Change language
 i18n.changeLanguage('es'); // Spanish
@@ -240,7 +240,7 @@ import type {
   NotesAppEventMap,
   KeywordIndex,
   StorageBackend,
-} from '@your-username/obclone';
+} from '@fluidnotions/mindmesh';
 ```
 
 ## Event System
@@ -280,7 +280,7 @@ unsubscribe(); // Stop listening
 Import the default stylesheet:
 
 ```typescript
-import '@your-username/obclone/css';
+import '@fluidnotions/mindmesh/css';
 ```
 
 ### Custom Styling
@@ -290,20 +290,20 @@ Override CSS variables:
 ```css
 :root {
   /* Colors */
-  --obclone-bg-primary: #1e1e1e;
-  --obclone-bg-secondary: #252526;
-  --obclone-text-primary: #e0e0e0;
-  --obclone-text-secondary: #888;
-  --obclone-accent: #007acc;
+  --mindmesh-bg-primary: #1e1e1e;
+  --mindmesh-bg-secondary: #252526;
+  --mindmesh-text-primary: #e0e0e0;
+  --mindmesh-text-secondary: #888;
+  --mindmesh-accent: #007acc;
 
   /* Spacing */
-  --obclone-spacing-sm: 0.5rem;
-  --obclone-spacing-md: 1rem;
-  --obclone-spacing-lg: 1.5rem;
+  --mindmesh-spacing-sm: 0.5rem;
+  --mindmesh-spacing-md: 1rem;
+  --mindmesh-spacing-lg: 1.5rem;
 
   /* Font */
-  --obclone-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --obclone-font-size: 14px;
+  --mindmesh-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mindmesh-font-size: 14px;
 }
 ```
 
@@ -311,10 +311,10 @@ Override CSS variables:
 
 The library provides multiple output formats:
 
-- **ESM**: `dist/obclone.es.js` (for modern bundlers)
-- **UMD**: `dist/obclone.umd.js` (for legacy/browser)
+- **ESM**: `dist/mindmesh.es.js` (for modern bundlers)
+- **UMD**: `dist/mindmesh.umd.js` (for legacy/browser)
 - **Types**: `dist/index.d.ts` (TypeScript definitions)
-- **CSS**: `dist/obclone.css` (styles)
+- **CSS**: `dist/mindmesh.css` (styles)
 
 ## Bundle Size
 

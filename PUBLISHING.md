@@ -1,6 +1,6 @@
 # Publishing to GitHub Packages
 
-This guide explains how to publish the ObClone library to GitHub Packages (private npm registry).
+This guide explains how to publish the MindMesh library to GitHub Packages (private npm registry).
 
 ## Prerequisites
 
@@ -12,13 +12,13 @@ This guide explains how to publish the ObClone library to GitHub Packages (priva
 
 ### 1. Update Package Name
 
-In `package.json`, replace `@your-username` with your GitHub username:
+In `package.json`, replace `@fluidnotions` with your GitHub username:
 
 ```json
 {
-  "name": "@YOUR_GITHUB_USERNAME/obclone",
+  "name": "@fluidnotions/mindmesh",
   "repository": {
-    "url": "https://github.com/YOUR_GITHUB_USERNAME/obclone.git"
+    "url": "https://github.com/fluidnotions/mindmesh.git"
   }
 }
 ```
@@ -38,7 +38,7 @@ In `package.json`, replace `@your-username` with your GitHub username:
 Create/edit `~/.npmrc`:
 
 ```bash
-@YOUR_GITHUB_USERNAME:registry=https://npm.pkg.github.com
+@fluidnotions:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
 ```
 
@@ -63,10 +63,10 @@ npm publish
 
 ```bash
 # List published versions
-npm view @YOUR_GITHUB_USERNAME/obclone versions
+npm view @fluidnotions/mindmesh versions
 
 # View package info
-npm view @YOUR_GITHUB_USERNAME/obclone
+npm view @fluidnotions/mindmesh
 ```
 
 ## Automated Publishing with GitHub Actions
@@ -97,13 +97,13 @@ gh release create v1.0.0 --title "Release 1.0.0" --notes "Initial release"
 
 ```bash
 # Configure npm for GitHub Packages
-echo "@YOUR_GITHUB_USERNAME:registry=https://npm.pkg.github.com" >> .npmrc
+echo "@fluidnotions:registry=https://npm.pkg.github.com" >> .npmrc
 
 # Add authentication (use environment variable in CI/CD)
 echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
 
 # Install
-npm install @YOUR_GITHUB_USERNAME/obclone
+npm install @fluidnotions/mindmesh
 ```
 
 ### In CI/CD (GitHub Actions)
@@ -116,7 +116,7 @@ steps:
     with:
       node-version: '20'
       registry-url: 'https://npm.pkg.github.com'
-      scope: '@YOUR_GITHUB_USERNAME'
+      scope: '@fluidnotions'
 
   - name: Install dependencies
     run: npm ci
@@ -181,10 +181,10 @@ npm login --registry=https://npm.pkg.github.com
 
 ```bash
 # Verify package name matches GitHub username
-npm view @YOUR_GITHUB_USERNAME/obclone
+npm view @fluidnotions/mindmesh
 
 # Check registry configuration
-npm config get @YOUR_GITHUB_USERNAME:registry
+npm config get @fluidnotions:registry
 ```
 
 ### Build Failures
@@ -228,9 +228,9 @@ The published package includes:
 
 ```
 dist/
-  obclone.es.js       # ESM bundle
-  obclone.umd.js      # UMD bundle
-  obclone.css         # Styles
+  mindmesh.es.js       # ESM bundle
+  mindmesh.umd.js      # UMD bundle
+  mindmesh.css         # Styles
   index.d.ts          # TypeScript definitions
   *.d.ts              # Additional type files
 README.md
