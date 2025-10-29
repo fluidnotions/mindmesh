@@ -6,7 +6,7 @@ const LINK_REGEX = /\[\[([^\]]+)\]\]/g;
 /**
  * Extract all wiki-style links from markdown content
  * @param content - Markdown content to parse
- * @returns Array of link names
+ * @returns Array of link names (or paths)
  */
 export function extractLinks(content: string): string[] {
   const links: string[] = [];
@@ -19,6 +19,42 @@ export function extractLinks(content: string): string[] {
   }
 
   return links;
+}
+
+/**
+ * Parse a link reference which can be:
+ * - Simple name: [[MyNote]]
+ * - Full path: [[/Folder/MyNote]]
+ * - Relative path: [[Folder/MyNote]]
+ * @param linkRef - Link reference from [[...]]
+ * @returns Object with name and path information
+ */
+export function parseLinkReference(linkRef: string): {
+  name: string;
+  fullPath: string | null;
+  isPath: boolean;
+} {
+  const trimmed = linkRef.trim();
+
+  // Check if it contains a slash (path-based link)
+  if (trimmed.includes('/')) {
+    const parts = trimmed.split('/').filter((p) => p);
+    const name = parts[parts.length - 1] || trimmed;
+    const fullPath = trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+
+    return {
+      name,
+      fullPath,
+      isPath: true,
+    };
+  }
+
+  // Simple name-based link
+  return {
+    name: trimmed,
+    fullPath: null,
+    isPath: false,
+  };
 }
 
 /**
@@ -35,16 +71,25 @@ export function hasLink(content: string, linkName: string): boolean {
 /**
  * Replace wiki-style links with clickable links
  * @param content - Markdown content
- * @param onLinkClick - Callback for link clicks
+ * @param fileExists - Function to check if a file exists by name or path
  * @returns Content with processed links
  */
 export function processLinks(
   content: string,
-  fileExists: (name: string) => boolean
+  fileExists: (nameOrPath: string) => boolean
 ): string {
-  return content.replace(LINK_REGEX, (_match, linkName) => {
-    const exists = fileExists(linkName.trim());
+  return content.replace(LINK_REGEX, (_match, linkRef) => {
+    const parsed = parseLinkReference(linkRef);
+
+    // Try to find the file by full path first, then by name
+    let exists = false;
+    if (parsed.isPath && parsed.fullPath) {
+      exists = fileExists(parsed.fullPath);
+    } else {
+      exists = fileExists(parsed.name);
+    }
+
     const className = exists ? 'wiki-link-exists' : 'wiki-link-missing';
-    return `<span class="${className}" data-link="${linkName.trim()}">${linkName}</span>`;
+    return `<span class="${className}" data-link="${linkRef.trim()}">${linkRef}</span>`;
   });
 }

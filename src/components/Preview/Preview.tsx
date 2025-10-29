@@ -3,6 +3,8 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useApp } from '../../context/AppContext';
+import { parseLinkReference } from '../../utils/linkParser';
+import { getParentPath } from '../../services/fileService';
 import './Preview.css';
 
 interface PreviewProps {
@@ -10,20 +12,36 @@ interface PreviewProps {
 }
 
 export function Preview({ content }: PreviewProps) {
-  const { files, setCurrentFile, createNewFile } = useApp();
+  const { files, setCurrentFile, createNewFile, getCurrentFile } = useApp();
+  const currentFile = getCurrentFile();
+
+  // Helper to find file by name or path
+  const findFile = (nameOrPath: string) => {
+    // First try to find by exact path
+    const byPath = Array.from(files.values()).find(
+      (f) => f.path === nameOrPath || f.path === `/${nameOrPath}`
+    );
+    if (byPath) return byPath;
+
+    // Then try to find by name
+    return Array.from(files.values()).find(
+      (f) => f.name === nameOrPath
+    );
+  };
 
   // Custom renderer for wiki-style links
   const processedContent = React.useMemo(() => {
     const linkRegex = /\[\[([^\]]+)\]\]/g;
-    return content.replace(linkRegex, (_match, linkName) => {
-      const linkedFile = Array.from(files.values()).find(
-        (f) => f.name === linkName.trim()
-      );
+    return content.replace(linkRegex, (_match, linkRef) => {
+      const parsed = parseLinkReference(linkRef.trim());
+      const linkedFile = parsed.isPath && parsed.fullPath
+        ? findFile(parsed.fullPath) || findFile(parsed.name)
+        : findFile(parsed.name);
 
       if (linkedFile) {
-        return `<span class="wiki-link wiki-link-exists" data-link="${linkName.trim()}">${linkName}</span>`;
+        return `<span class="wiki-link wiki-link-exists" data-link="${linkRef.trim()}">${linkRef}</span>`;
       } else {
-        return `<span class="wiki-link wiki-link-missing" data-link="${linkName.trim()}">${linkName}</span>`;
+        return `<span class="wiki-link wiki-link-missing" data-link="${linkRef.trim()}">${linkRef}</span>`;
       }
     });
   }, [content, files]);
@@ -31,21 +49,26 @@ export function Preview({ content }: PreviewProps) {
   const handleClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     if (target.classList.contains('wiki-link')) {
-      const linkName = target.getAttribute('data-link');
-      if (!linkName) return;
+      const linkRef = target.getAttribute('data-link');
+      if (!linkRef) return;
 
-      // Find existing file
-      const linkedFile = Array.from(files.values()).find(
-        (f) => f.name === linkName
-      );
+      const parsed = parseLinkReference(linkRef);
+
+      // Try to find existing file
+      const linkedFile = parsed.isPath && parsed.fullPath
+        ? findFile(parsed.fullPath) || findFile(parsed.name)
+        : findFile(parsed.name);
 
       if (linkedFile) {
         // Navigate to existing file
         setCurrentFile(linkedFile.id);
       } else {
         // Create new file
-        if (confirm(`Note "${linkName}" doesn't exist. Create it?`)) {
-          const newFile = createNewFile(linkName, `/${linkName}`, `# ${linkName}\n\n`);
+        const fileName = parsed.name;
+        const filePath = parsed.fullPath || (currentFile ? `${getParentPath(currentFile.path)}/${fileName}` : `/${fileName}`);
+
+        if (confirm(`Note "${fileName}" doesn't exist. Create it?`)) {
+          const newFile = createNewFile(fileName, filePath, `# ${fileName}\n\n`);
           setCurrentFile(newFile.id);
         }
       }

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Preview } from '../Preview/Preview';
+import { Breadcrumb } from '../FileExplorer/Breadcrumb';
 import './Editor.css';
 
 export function Editor() {
@@ -51,10 +52,10 @@ export function Editor() {
 
   return (
     <div className="editor-container">
+      <Breadcrumb path={currentFile.path} />
       <div className="editor-header">
         <div className="editor-title">
           <h1>{currentFile.name}</h1>
-          <span className="editor-path">{currentFile.path}</span>
         </div>
         <div className="editor-toolbar">
           <div className="view-mode-toggle">
