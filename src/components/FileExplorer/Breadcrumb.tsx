@@ -1,4 +1,5 @@
 // Breadcrumb navigation component
+import { useTranslation } from 'react-i18next';
 import './Breadcrumb.css';
 
 interface BreadcrumbProps {
@@ -7,13 +8,15 @@ interface BreadcrumbProps {
 }
 
 export function Breadcrumb({ path, onNavigate }: BreadcrumbProps) {
+  const { t } = useTranslation();
+
   // Build breadcrumb path segments
   const buildSegments = (fullPath: string): { name: string; path: string }[] => {
     if (!fullPath || fullPath === '/') {
-      return [{ name: 'Root', path: '/' }];
+      return [{ name: t('breadcrumb.root'), path: '/' }];
     }
 
-    const segments: { name: string; path: string }[] = [{ name: 'Root', path: '/' }];
+    const segments: { name: string; path: string }[] = [{ name: t('breadcrumb.root'), path: '/' }];
     const parts = fullPath.split('/').filter((p) => p);
 
     let currentPath = '';

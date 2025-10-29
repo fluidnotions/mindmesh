@@ -1,5 +1,6 @@
 // Graph Visualization component - Shows document relationships with zoom and pan
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { buildGraphData } from '../../services/graphService';
 import './GraphView.css';
@@ -14,6 +15,7 @@ interface GraphNode {
 }
 
 export function GraphView() {
+  const { t } = useTranslation();
   const { files, currentFileId, showGraphView, toggleGraphView } = useApp();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [graphData, setGraphData] = React.useState<ReturnType<typeof buildGraphData>>({ nodes: [], links: [] });
@@ -202,7 +204,7 @@ export function GraphView() {
   return (
     <div className="graph-view">
       <div className="graph-header">
-        <h2>Graph View</h2>
+        <h2>{t('graphView.title')}</h2>
         <button onClick={toggleGraphView} className="btn-close">
           ×
         </button>
@@ -222,23 +224,23 @@ export function GraphView() {
         />
         {graphData.nodes.length === 0 && (
           <div className="graph-empty">
-            <p>No connections yet</p>
-            <p>Create links between notes using [[Note Name]]</p>
+            <p>{t('graphView.noConnections')}</p>
+            <p>{t('graphView.createLinksPrompt')}</p>
           </div>
         )}
       </div>
       <div className="graph-controls">
         <p className="graph-stats">
-          {graphData.nodes.length} notes • {graphData.links.length} connections
+          {t('graphView.stats', { noteCount: graphData.nodes.length, linkCount: graphData.links.length })}
         </p>
         <div className="graph-zoom-controls">
-          <button onClick={handleReset} className="btn-reset" title="Reset view">
-            Reset
+          <button onClick={handleReset} className="btn-reset" title={t('graphView.reset')}>
+            {t('graphView.reset')}
           </button>
           <span className="zoom-level">{Math.round(transform.scale * 100)}%</span>
         </div>
         <p className="graph-help">
-          Scroll to zoom • Middle-click and drag to pan
+          {t('graphView.zoomHelp')}
         </p>
       </div>
     </div>

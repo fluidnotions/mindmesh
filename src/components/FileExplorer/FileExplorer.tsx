@@ -1,10 +1,12 @@
 // File Explorer component - Left sidebar with hierarchical file tree
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { buildTree, TreeNode } from '../../services/fileService';
 import './FileExplorer.css';
 
 export function FileExplorer() {
+  const { t } = useTranslation();
   const {
     files,
     folders,
@@ -39,7 +41,7 @@ export function FileExplorer() {
 
   // File operations
   const handleCreateFile = (parentPath: string = '/') => {
-    const fileName = prompt('Enter file name:');
+    const fileName = prompt(t('fileExplorer.enterFileName'));
     if (fileName) {
       const filePath = parentPath === '/' ? `/${fileName}` : `${parentPath}/${fileName}`;
       const newFile = createNewFile(fileName, filePath);
@@ -53,7 +55,7 @@ export function FileExplorer() {
   };
 
   const handleDeleteFile = (fileId: string, fileName: string) => {
-    if (confirm(`Delete "${fileName}"?`)) {
+    if (confirm(t('fileExplorer.deleteConfirm', { name: fileName }))) {
       deleteFile(fileId);
     }
   };
@@ -64,7 +66,7 @@ export function FileExplorer() {
 
   // Folder operations
   const handleCreateFolder = (parentPath: string = '/') => {
-    const folderName = prompt('Enter folder name:');
+    const folderName = prompt(t('fileExplorer.enterFolderName'));
     if (folderName) {
       const folderPath = parentPath === '/' ? `/${folderName}` : `${parentPath}/${folderName}`;
       createNewFolder(folderName, folderPath);
@@ -82,11 +84,11 @@ export function FileExplorer() {
     const hasChildren = folderNode?.children && folderNode.children.length > 0;
 
     if (hasChildren) {
-      alert('Cannot delete folder with contents. Please delete all files and subfolders first.');
+      alert(t('fileExplorer.cannotDeleteNonEmptyFolder'));
       return;
     }
 
-    if (confirm(`Delete folder "${folderName}"?`)) {
+    if (confirm(t('fileExplorer.deleteConfirm', { name: folderName }))) {
       deleteFolder(folderId);
     }
   };
@@ -181,7 +183,7 @@ export function FileExplorer() {
                   e.stopPropagation();
                   handleCreateFile(node.path);
                 }}
-                title="Add file"
+                title={t('fileExplorer.newFile')}
               >
                 +📄
               </button>
@@ -191,7 +193,7 @@ export function FileExplorer() {
                   e.stopPropagation();
                   handleCreateFolder(node.path);
                 }}
-                title="Add subfolder"
+                title={t('fileExplorer.newFolder')}
               >
                 +📁
               </button>
@@ -201,7 +203,7 @@ export function FileExplorer() {
                   e.stopPropagation();
                   handleDeleteFolder(node.id, node.name, node.path);
                 }}
-                title="Delete folder"
+                title={t('button.delete')}
               >
                 ×
               </button>
@@ -233,7 +235,7 @@ export function FileExplorer() {
               e.stopPropagation();
               handleDeleteFile(node.id, node.name);
             }}
-            title="Delete file"
+            title={t('button.delete')}
           >
             ×
           </button>
@@ -270,19 +272,19 @@ export function FileExplorer() {
   return (
     <div className="file-explorer">
       <div className="file-explorer-header">
-        <h2>Files</h2>
+        <h2>{t('fileExplorer.title')}</h2>
         <div className="header-actions">
           <button
             onClick={() => handleCreateFile('/')}
             className="btn-create"
-            title="New file at root"
+            title={t('fileExplorer.newFile')}
           >
             +📄
           </button>
           <button
             onClick={() => handleCreateFolder('/')}
             className="btn-create"
-            title="New folder at root"
+            title={t('fileExplorer.newFolder')}
           >
             +📁
           </button>
@@ -292,7 +294,7 @@ export function FileExplorer() {
       <div className="search-box">
         <input
           type="text"
-          placeholder="Search files..."
+          placeholder={t('fileExplorer.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -301,7 +303,7 @@ export function FileExplorer() {
       <div className="file-tree">
         {filteredTree.length === 0 ? (
           <div className="empty-state">
-            {searchQuery ? 'No matching files' : 'No files yet'}
+            {searchQuery ? t('fileExplorer.noFiles') : t('fileExplorer.noFiles')}
           </div>
         ) : (
           filteredTree.map((node) => renderTreeNode(node, 0))

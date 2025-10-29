@@ -1,5 +1,6 @@
 // Markdown Preview component
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useApp } from '../../context/AppContext';
@@ -12,6 +13,7 @@ interface PreviewProps {
 }
 
 export function Preview({ content }: PreviewProps) {
+  const { t } = useTranslation();
   const { files, setCurrentFile, createNewFile, getCurrentFile } = useApp();
   const currentFile = getCurrentFile();
 
@@ -66,7 +68,7 @@ export function Preview({ content }: PreviewProps) {
         const fileName = parsed.name;
         const filePath = parsed.fullPath || (currentFile ? `${getParentPath(currentFile.path)}/${fileName}` : `/${fileName}`);
 
-        if (confirm(`Note "${fileName}" doesn't exist. Create it?`)) {
+        if (confirm(t('preview.noteDoesntExist', { noteName: fileName }))) {
           const newFile = createNewFile(fileName, filePath, `# ${fileName}\n\n`);
           setCurrentFile(newFile.id);
         }

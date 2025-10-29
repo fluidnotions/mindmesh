@@ -1,5 +1,6 @@
 // Main App component - Root of the application
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AppProvider, useApp } from './context/AppContext';
 import { FileExplorer } from './components/FileExplorer/FileExplorer';
 import { Editor } from './components/Editor/Editor';
@@ -12,6 +13,7 @@ interface AppProps {
 }
 
 function AppContent({ facade }: { facade?: NotesAppFacade }) {
+  const { t } = useTranslation();
   const context = useApp();
   const { toggleGraphView, files, folders, currentFileId, editorViewMode, showGraphView } = context;
 
@@ -41,7 +43,7 @@ function AppContent({ facade }: { facade?: NotesAppFacade }) {
       <Editor />
       <GraphView />
       <button className="btn-toggle-graph" onClick={toggleGraphView}>
-        📊 Graph
+        📊 {t('graphView.title')}
       </button>
     </div>
   );

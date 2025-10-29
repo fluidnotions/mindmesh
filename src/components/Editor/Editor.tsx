@@ -1,11 +1,13 @@
 // Markdown Editor component
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { Preview } from '../Preview/Preview';
 import { Breadcrumb } from '../FileExplorer/Breadcrumb';
 import './Editor.css';
 
 export function Editor() {
+  const { t } = useTranslation();
   const { getCurrentFile, updateFile, editorViewMode, setEditorViewMode } = useApp();
   const currentFile = getCurrentFile();
   const [localContent, setLocalContent] = useState('');
@@ -43,8 +45,8 @@ export function Editor() {
     return (
       <div className="editor-container">
         <div className="editor-empty">
-          <p>No file selected</p>
-          <p>Select a file from the explorer or create a new one</p>
+          <p>{t('editor.noFileSelected')}</p>
+          <p>{t('editor.selectFilePrompt')}</p>
         </div>
       </div>
     );
@@ -63,25 +65,25 @@ export function Editor() {
               className={editorViewMode === 'edit' ? 'active' : ''}
               onClick={() => setEditorViewMode('edit')}
             >
-              Edit
+              {t('editor.editMode')}
             </button>
             <button
               className={editorViewMode === 'preview' ? 'active' : ''}
               onClick={() => setEditorViewMode('preview')}
             >
-              Preview
+              {t('editor.previewMode')}
             </button>
             <button
               className={editorViewMode === 'split' ? 'active' : ''}
               onClick={() => setEditorViewMode('split')}
             >
-              Split
+              {t('editor.splitMode')}
             </button>
           </div>
           <div className={`save-indicator ${saveStatus}`}>
-            {saveStatus === 'saved' && '✓ Saved'}
-            {saveStatus === 'saving' && '⟳ Saving...'}
-            {saveStatus === 'unsaved' && '● Unsaved'}
+            {saveStatus === 'saved' && `✓ ${t('editor.saved')}`}
+            {saveStatus === 'saving' && `⟳ ${t('editor.saving')}`}
+            {saveStatus === 'unsaved' && `● ${t('editor.unsaved')}`}
           </div>
         </div>
       </div>
@@ -92,7 +94,7 @@ export function Editor() {
             <textarea
               value={localContent}
               onChange={handleContentChange}
-              placeholder="Start typing... Use [[Note Name]] to link to other notes"
+              placeholder={t('editor.placeholder')}
               spellCheck={false}
             />
           </div>

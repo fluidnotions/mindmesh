@@ -1,0 +1,153 @@
+{
+  "app": {
+    "title": "Notes App"
+  },
+  "fileExplorer": {
+    "title": "Files",
+    "newNote": "New Note",
+    "searchPlaceholder": "Search files...",
+    "newFile": "New File",
+    "newFolder": "New Folder",
+    "createFileIn": "Create file in {{folderName}}",
+    "createSubfolderIn": "Create subfolder in {{folderName}}",
+    "enterFileName": "Enter file name:",
+    "enterFolderName": "Enter folder name:",
+    "deleteConfirm": "Delete \"{{name}}\"?",
+    "cannotDeleteNonEmptyFolder": "Cannot delete non-empty folder. Please delete its contents first.",
+    "noFiles": "No files found"
+  },
+  "editor": {
+    "noFileSelected": "No file selected",
+    "selectFilePrompt": "Select a file from the explorer or create a new one",
+    "editMode": "Edit",
+    "previewMode": "Preview",
+    "splitMode": "Split",
+    "saved": "Saved",
+    "saving": "Saving...",
+    "unsaved": "Unsaved",
+    "placeholder": "Start typing... Use [[Note Name]] to link to other notes"
+  },
+  "graphView": {
+    "title": "Graph View",
+    "noConnections": "No connections yet",
+    "createLinksPrompt": "Create links between notes using [[Note Name]]",
+    "stats": "{{noteCount}} notes • {{linkCount}} connections",
+    "reset": "Reset",
+    "zoomHelp": "Scroll to zoom • Middle-click and drag to pan"
+  },
+  "preview": {
+    "noteDoesntExist": "Note \"{{noteName}}\" doesn't exist. Create it?",
+    "createNote": "Create"
+  },
+  "breadcrumb": {
+    "root": "Root"
+  },
+  "seedData": {
+    "welcome": {
+      "title": "Welcome to Your Notes App! 🎉",
+      "description": "This is a demo workspace with interconnected notes to showcase the features.",
+      "keyFeatures": "Key Features",
+      "feature1": "**Hierarchical Folders** - Organize notes in nested folders",
+      "feature2": "**Wiki Links** - Connect notes using [[Note Name]] syntax",
+      "feature3": "**Graph View** - Visualize connections between notes",
+      "feature4": "**Drag and Drop** - Move files between folders",
+      "exploreDemo": "Explore the Demo",
+      "exploreDescription": "Check out these connected notes:",
+      "helpText": "Try clicking the links above to navigate, or use the **Graph** button to see all connections!"
+    },
+    "jsBasics": {
+      "title": "JavaScript Basics",
+      "description": "JavaScript is a powerful programming language used for web development.",
+      "concepts": "Core Concepts",
+      "variables": "Variables",
+      "functions": "Functions",
+      "relatedTopics": "Related Topics",
+      "nextSteps": "Next Steps",
+      "nextStepsDescription": "After mastering the basics, explore:"
+    },
+    "reactBasics": {
+      "title": "React Basics",
+      "description": "React is a JavaScript library for building user interfaces.",
+      "components": "Components",
+      "componentsDescription": "Components are the building blocks of React apps:",
+      "propsAndState": "Props and State",
+      "props": "**Props**: Data passed to components",
+      "state": "**State**: Internal component data",
+      "learnMore": "Learn more about {{topic}} for modern state management.",
+      "prerequisites": "Prerequisites",
+      "prerequisitesDescription": "Make sure you understand {{topic}} before diving into React.",
+      "advancedTopics": "Advanced Topics"
+    },
+    "reactHooks": {
+      "title": "React Hooks",
+      "description": "Hooks let you use state and other React features without writing classes.",
+      "commonHooks": "Common Hooks",
+      "useState": "useState",
+      "useEffect": "useEffect",
+      "useContext": "useContext",
+      "prerequisites": "Prerequisites",
+      "prerequisitesDescription": "Before learning hooks, understand:",
+      "related": "Related"
+    },
+    "typescript": {
+      "title": "TypeScript",
+      "description": "TypeScript is JavaScript with syntax for types.",
+      "whyTypeScript": "Why TypeScript?",
+      "benefit1": "Type safety catches errors early",
+      "benefit2": "Better IDE support",
+      "benefit3": "Improved code documentation",
+      "basicTypes": "Basic Types",
+      "interfaces": "Interfaces",
+      "related": "Related"
+    },
+    "stateManagement": {
+      "title": "State Management",
+      "description": "Managing application state effectively is crucial for scalable apps.",
+      "approaches": "Approaches",
+      "approach1Title": "1. React Context",
+      "approach1Description": "Built-in React solution for global state.",
+      "approach2Title": "2. Redux",
+      "approach2Description": "Popular state management library.",
+      "approach3Title": "3. Zustand",
+      "approach3Description": "Lightweight alternative.",
+      "whenToUse": "When to Use",
+      "smallApps": "Small apps: {{solution}} + Context",
+      "largeApps": "Large apps: Redux or Zustand",
+      "typeSafety": "Type safety: {{solution}}",
+      "prerequisites": "Prerequisites"
+    },
+    "learningJourney": {
+      "title": "My Learning Journey",
+      "goals2024": "2024 Goals",
+      "goal1": "Master {{topic}}",
+      "goal2": "Build projects with {{topic}}",
+      "goal3": "Learn {{topic}}",
+      "progress": "Progress",
+      "completed": "Completed ✅",
+      "completedItem1": "Basic JavaScript syntax",
+      "completedItem2": "First React component",
+      "inProgress": "In Progress 🔄",
+      "resources": "Resources",
+      "resourcesDescription": "Check out {{link}} for an overview of available notes.",
+      "nextSteps": "Next Steps",
+      "nextStepsDescription": "Continue with {{topic1}} and then explore {{topic2}}."
+    }
+  },
+  "button": {
+    "create": "Create",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "close": "Close",
+    "reset": "Reset"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "notes": "notes",
+    "connections": "connections",
+    "files": "files",
+    "folders": "folders"
+  }
+}

@@ -15,9 +15,11 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.919.0",
     "@aws-sdk/util-dynamodb": "^3.919.0",
+    "i18next": "^25.6.0",
     "pako": "^2.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-i18next": "^16.2.1",
     "react-markdown": "^9.0.1",
     "remark-gfm": "^4.0.0",
     "uuid": "^9.0.1"
