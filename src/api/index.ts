@@ -2,7 +2,7 @@
 
 export { NotesAppFacade, notesApp } from './NotesAppFacade';
 export { NotesAppEventEmitter } from './EventEmitter';
-export {
+export type {
   NotesAppConfig,
   NotesAppEvent,
   NotesAppEventMap,
@@ -24,4 +24,4 @@ export {
 } from './types';
 
 // Re-export types from models for convenience
-export { File, Folder, EditorViewMode, GraphData, GraphNode, GraphLink } from '../models/types';
+export type { File, Folder, EditorViewMode, GraphData, GraphNode, GraphLink } from '../models/types';

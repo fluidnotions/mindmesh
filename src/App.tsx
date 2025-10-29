@@ -5,12 +5,10 @@ import { FileExplorer } from './components/FileExplorer/FileExplorer';
 import { Editor } from './components/Editor/Editor';
 import { GraphView } from './components/GraphView/GraphView';
 import { NotesAppFacade } from './api/NotesAppFacade';
-import { NotesAppConfig } from './api/types';
 import './App.css';
 
 interface AppProps {
   facade?: NotesAppFacade;
-  initialConfig?: NotesAppConfig;
 }
 
 function AppContent({ facade }: { facade?: NotesAppFacade }) {
@@ -49,7 +47,7 @@ function AppContent({ facade }: { facade?: NotesAppFacade }) {
   );
 }
 
-function App({ facade, initialConfig }: AppProps = {}) {
+function App({ facade }: AppProps = {}) {
   return (
     <AppProvider>
       <AppContent facade={facade} />

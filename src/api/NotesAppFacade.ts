@@ -11,7 +11,6 @@ import {
   FileQueryOptions,
   WorkspaceStats,
   EventHandler,
-  StorageBackend,
 } from './types';
 import { NotesAppEventEmitter } from './EventEmitter';
 import App from '../App';
@@ -83,11 +82,9 @@ export class NotesAppFacade {
     // Create React root and render App
     this.root = createRoot(element);
 
-    // We'll need to modify App.tsx to accept a facade prop
-    // For now, this is the interface
-    this.root.render(createElement(App, {
+    // Render App component with facade prop
+    this.root.render(createElement(App as any, {
       facade: this,
-      initialConfig: config,
     }));
 
     // Call onReady callback

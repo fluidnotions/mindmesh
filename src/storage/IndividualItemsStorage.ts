@@ -282,6 +282,7 @@ export class IndividualItemsStorage {
         id: item.folderId,
         name: item.name,
         path: item.path,
+        parentPath: null,
         children,
       };
     } catch (error) {
@@ -662,6 +663,7 @@ export class IndividualItemsStorage {
         id: folderItem.folderId,
         name: folderItem.name,
         path: folderItem.path,
+        parentPath: null,
         children,
       });
     }

@@ -299,6 +299,7 @@ export class SingleDocumentStorage {
           id: folder.id,
           name: folder.name,
           path: folder.path,
+          parentPath: null,
           children,
         });
       });

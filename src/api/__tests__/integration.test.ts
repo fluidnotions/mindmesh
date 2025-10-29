@@ -69,8 +69,8 @@ describe('Integration Tests', () => {
       setupMockContext(facade);
 
       // Create a folder structure
-      const projectsFolder = await facade.createFolder('Projects', '/Projects');
-      const notesFolder = await facade.createFolder('Notes', '/Notes');
+      await facade.createFolder('Projects', '/Projects');
+      await facade.createFolder('Notes', '/Notes');
 
       expect(facade.getAllFolders()).toHaveLength(2);
 
@@ -81,13 +81,13 @@ describe('Integration Tests', () => {
         '# Welcome to my notes!'
       );
 
-      const projectNote = await facade.createFile(
+      await facade.createFile(
         'Project A',
         '/Projects/Project A',
         '# Project A\n\nThis is [[Project B]]'
       );
 
-      const projectB = await facade.createFile(
+      await facade.createFile(
         'Project B',
         '/Projects/Project B',
         '# Project B\n\nRelated to [[Project A]]'
@@ -150,12 +150,12 @@ describe('Integration Tests', () => {
 
       // Create initial data
       const file1 = await facade.createFile('Note 1', '/Note 1', 'Content 1');
-      const file2 = await facade.createFile('Note 2', '/Note 2', 'Content 2');
+      await facade.createFile('Note 2', '/Note 2', 'Content 2');
       const folder1 = await facade.createFolder('Folder 1', '/Folder 1');
 
       // Export workspace
       const workspaceData = facade.getWorkspace();
-      const exportedJson = facade.exportWorkspace();
+      facade.exportWorkspace();
 
       expect(Object.keys(workspaceData.files)).toHaveLength(2);
       expect(Object.keys(workspaceData.folders)).toHaveLength(1);
@@ -471,7 +471,7 @@ describe('Integration Tests', () => {
       setupMockContext(facade);
 
       const file1 = await facade.createFile('File 1', '/File 1', 'content');
-      const folder1 = await facade.createFolder('Folder 1', '/Folder 1');
+      await facade.createFolder('Folder 1', '/Folder 1');
 
       // Perform mixed operations
       await Promise.all([
@@ -549,6 +549,7 @@ function setupMockContext(facade: NotesAppFacade) {
         id: `folder-${Math.random()}`,
         name,
         path,
+        parentPath: null,
         children: [],
       };
       facade['folders'].set(folder.id, folder);

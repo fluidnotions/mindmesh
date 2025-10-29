@@ -933,6 +933,7 @@ function createMockFolder(
     id: `folder-${Math.random()}`,
     name,
     path,
+    parentPath: null,
     children: [],
   };
 }
