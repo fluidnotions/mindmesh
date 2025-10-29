@@ -1,0 +1,80 @@
+.graph-view {
+  width: 350px;
+  height: 100vh;
+  background-color: #1e1e1e;
+  border-left: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+}
+
+.graph-header {
+  padding: 1rem;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.graph-header h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: #e0e0e0;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  color: #e0e0e0;
+}
+
+.graph-canvas-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.graph-canvas {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.graph-empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #888;
+  pointer-events: none;
+}
+
+.graph-empty p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.graph-controls {
+  padding: 1rem;
+  border-top: 1px solid #333;
+  background-color: #252526;
+}
+
+.graph-stats {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+}

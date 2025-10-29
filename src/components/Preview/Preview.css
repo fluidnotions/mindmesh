@@ -1,0 +1,126 @@
+.preview {
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+.preview h1 {
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #e0e0e0;
+}
+
+.preview h2 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #e0e0e0;
+}
+
+.preview h3 {
+  font-size: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+}
+
+.preview p {
+  margin-bottom: 1rem;
+}
+
+.preview code {
+  background-color: #2d2d2d;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.preview pre {
+  background-color: #1e1e1e;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.preview pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.preview ul, .preview ol {
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+}
+
+.preview li {
+  margin-bottom: 0.5rem;
+}
+
+.preview blockquote {
+  border-left: 4px solid #007acc;
+  padding-left: 1rem;
+  margin-left: 0;
+  color: #aaa;
+}
+
+.preview a {
+  color: #007acc;
+  text-decoration: none;
+}
+
+.preview a:hover {
+  text-decoration: underline;
+}
+
+/* Wiki-style links */
+.wiki-link {
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.wiki-link-exists {
+  color: #4fc3f7;
+  background-color: rgba(79, 195, 247, 0.1);
+}
+
+.wiki-link-exists:hover {
+  background-color: rgba(79, 195, 247, 0.2);
+}
+
+.wiki-link-missing {
+  color: #ff9800;
+  background-color: rgba(255, 152, 0, 0.1);
+  border-bottom: 1px dashed #ff9800;
+}
+
+.wiki-link-missing:hover {
+  background-color: rgba(255, 152, 0, 0.2);
+}
+
+.preview table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.preview th,
+.preview td {
+  border: 1px solid #444;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.preview th {
+  background-color: #2d2d2d;
+  font-weight: bold;
+}
+
+.preview hr {
+  border: none;
+  border-top: 1px solid #444;
+  margin: 1.5rem 0;
+}
