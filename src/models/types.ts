@@ -14,6 +14,7 @@ export interface Folder {
   id: string; // Unique identifier
   name: string; // Folder name
   path: string; // Full path
+  parentPath: string | null; // Parent folder path (null for root)
   children: (File | Folder)[]; // Child files and folders
 }
 

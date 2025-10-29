@@ -22,17 +22,22 @@
   color: #e0e0e0;
 }
 
-.btn-create-file {
+.header-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn-create {
   background-color: #007acc;
   color: white;
   border: none;
-  padding: 0.4rem 0.8rem;
+  padding: 0.3rem 0.6rem;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
 }
 
-.btn-create-file:hover {
+.btn-create:hover {
   background-color: #005a9e;
 }
 
@@ -56,33 +61,112 @@
   border-color: #007acc;
 }
 
-.file-list {
+.file-tree {
   flex: 1;
   overflow-y: auto;
-  padding: 0.5rem;
+  padding: 0.5rem 0;
 }
 
-.file-item {
+/* Tree structure styles */
+.tree-node-wrapper {
+  user-select: none;
+}
+
+.tree-node {
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0.4rem 0.5rem;
   cursor: pointer;
-  border-radius: 4px;
-  margin-bottom: 0.25rem;
   color: #e0e0e0;
+  transition: background-color 0.15s;
+  position: relative;
 }
 
-.file-item:hover {
+.tree-node:hover {
   background-color: #2d2d2d;
 }
 
-.file-item.active {
+.tree-node.active {
   background-color: #094771;
 }
 
-.file-icon {
-  margin-right: 0.5rem;
+/* Folder styles */
+.tree-node.folder {
+  font-weight: 500;
+}
+
+.folder-toggle {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.3rem;
+  font-size: 0.7rem;
+  color: #999;
+  cursor: pointer;
+}
+
+.folder-toggle:hover {
+  color: #e0e0e0;
+}
+
+.folder-icon {
+  margin-right: 0.4rem;
   font-size: 1rem;
+  cursor: pointer;
+}
+
+.folder-name {
+  flex: 1;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.folder-actions {
+  display: none;
+  gap: 0.2rem;
+  margin-left: 0.5rem;
+}
+
+.tree-node.folder:hover .folder-actions {
+  display: flex;
+}
+
+.btn-add-file,
+.btn-add-folder {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.btn-add-file:hover,
+.btn-add-folder:hover {
+  background-color: #3d3d3d;
+  color: #e0e0e0;
+}
+
+/* File styles */
+.tree-node.file {
+  padding-left: 0.5rem;
+}
+
+.file-indent {
+  width: 16px;
+  margin-right: 0.3rem;
+}
+
+.file-icon {
+  margin-right: 0.4rem;
+  font-size: 0.9rem;
 }
 
 .file-name {
@@ -98,19 +182,63 @@
   border: none;
   color: #999;
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   padding: 0;
   width: 20px;
   height: 20px;
   display: none;
   align-items: center;
   justify-content: center;
+  border-radius: 3px;
+  transition: all 0.2s;
 }
 
-.file-item:hover .btn-delete {
+.tree-node:hover .btn-delete {
   display: flex;
 }
 
 .btn-delete:hover {
   color: #ff4444;
+  background-color: #3d3d3d;
+}
+
+/* Folder children container */
+.folder-children {
+  position: relative;
+}
+
+/* Drag and drop styles */
+.tree-node.dragging {
+  opacity: 0.5;
+}
+
+.tree-node.drag-over {
+  background-color: #094771;
+  border-left: 3px solid #007acc;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* Scrollbar styling */
+.file-tree::-webkit-scrollbar {
+  width: 8px;
+}
+
+.file-tree::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.file-tree::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+.file-tree::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
