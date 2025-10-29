@@ -91,7 +91,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Build keyword index when files change
   useEffect(() => {
     if (files.size > 0) {
-      buildKeywordIndex(files).then(setKeywordIndex);
+      console.log('[AppContext] Building keyword index for', files.size, 'files');
+      buildKeywordIndex(files).then((index) => {
+        console.log('[AppContext] Keyword index built:', {
+          keywordCount: index.keywordToFiles.size,
+          keywords: Array.from(index.keywordToFiles.keys()).slice(0, 20),
+        });
+        setKeywordIndex(index);
+      });
     }
   }, [files]);
 

@@ -27,7 +27,17 @@ export function GraphView() {
   const [nodes, setNodes] = useState<GraphNode[]>([]);
 
   useEffect(() => {
+    console.log('[GraphView] Building graph data', {
+      fileCount: files.size,
+      hasKeywordIndex: !!keywordIndex,
+      keywordCount: keywordIndex?.keywordToFiles.size || 0,
+    });
     const data = buildGraphData(files, keywordIndex || undefined);
+    console.log('[GraphView] Graph data built:', {
+      nodeCount: data.nodes.length,
+      linkCount: data.links.length,
+      links: data.links,
+    });
     setGraphData(data);
   }, [files, keywordIndex]);
 

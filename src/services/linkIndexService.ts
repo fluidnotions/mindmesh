@@ -60,8 +60,10 @@ export function extractKeywords(content: string): Set<string> {
       keywords.add(heading);
       // Also add individual words from multi-word headings
       heading.split(/\s+/).forEach(word => {
-        if (word.length > 2) { // Skip very short words
-          keywords.add(word);
+        // Remove markdown formatting and punctuation
+        const clean = word.replace(/[*_`[\]()!?.,:;]+/g, '');
+        if (clean.length > 2) { // Skip very short words
+          keywords.add(clean);
         }
       });
     }
@@ -162,6 +164,18 @@ export async function buildKeywordIndex(files: Map<string, File>): Promise<Keywo
   // Update changed files
   for (const file of filesToUpdate) {
     const keywords = extractKeywords(file.content);
+
+    // Also add the file name as a keyword
+    keywords.add(file.name);
+    // Add individual words from file name
+    file.name.split(/\s+/).forEach(word => {
+      const clean = word.replace(/[*_`[\]()!?.,:;]+/g, '');
+      if (clean.length > 2) {
+        keywords.add(clean);
+      }
+    });
+
+    console.log(`[linkIndex] Extracted keywords from "${file.name}":`, Array.from(keywords).slice(0, 15));
     fileToKeywords.set(file.id, keywords);
 
     // Update keyword-to-files mapping
