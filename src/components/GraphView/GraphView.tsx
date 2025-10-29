@@ -1,18 +1,122 @@
-// Graph Visualization component - Shows document relationships
-import React, { useEffect, useRef } from 'react';
+// Graph Visualization component - Shows document relationships with zoom and pan
+import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { buildGraphData } from '../../services/graphService';
 import './GraphView.css';
+
+interface GraphNode {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+}
 
 export function GraphView() {
   const { files, currentFileId, showGraphView, toggleGraphView } = useApp();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [graphData, setGraphData] = React.useState<ReturnType<typeof buildGraphData>>({ nodes: [], links: [] });
 
+  // Pan and zoom state
+  const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [nodes, setNodes] = useState<GraphNode[]>([]);
+
   useEffect(() => {
     const data = buildGraphData(files);
     setGraphData(data);
   }, [files]);
+
+  // Initialize node positions when graph data changes
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(canvas.width, canvas.height) / 3;
+
+    const initialNodes = graphData.nodes.map((node, index) => {
+      const angle = (index / graphData.nodes.length) * 2 * Math.PI;
+      return {
+        ...node,
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
+        vx: 0,
+        vy: 0,
+      };
+    });
+
+    setNodes(initialNodes);
+  }, [graphData.nodes]);
+
+  // Handle wheel for zoom
+  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Calculate zoom factor
+    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+    const newScale = Math.max(0.1, Math.min(5, transform.scale * zoomFactor));
+
+    // Zoom towards mouse position
+    const scaleDiff = newScale - transform.scale;
+    const newX = transform.x - (mouseX - transform.x) * (scaleDiff / transform.scale);
+    const newY = transform.y - (mouseY - transform.y) * (scaleDiff / transform.scale);
+
+    setTransform({
+      x: newX,
+      y: newY,
+      scale: newScale,
+    });
+  };
+
+  // Handle mouse down for panning (middle button)
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // Middle mouse button (button 1)
+    if (e.button === 1) {
+      e.preventDefault();
+      setIsPanning(true);
+      setPanStart({ x: e.clientX - transform.x, y: e.clientY - transform.y });
+    }
+  };
+
+  // Handle mouse move for panning
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isPanning) {
+      e.preventDefault();
+      setTransform({
+        ...transform,
+        x: e.clientX - panStart.x,
+        y: e.clientY - panStart.y,
+      });
+    }
+  };
+
+  // Handle mouse up
+  const handleMouseUp = () => {
+    setIsPanning(false);
+  };
+
+  // Prevent context menu on middle click
+  const handleContextMenu = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isPanning) {
+      e.preventDefault();
+    }
+  };
+
+  // Reset zoom and pan
+  const handleReset = () => {
+    setTransform({ x: 0, y: 0, scale: 1 });
+  };
 
   useEffect(() => {
     if (!canvasRef.current || !showGraphView) return;
@@ -25,22 +129,17 @@ export function GraphView() {
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
-    // Simple force-directed layout simulation
-    // This is a basic implementation - can be enhanced with a proper graph library
-    const nodes = graphData.nodes.map(node => ({
-      ...node,
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: 0,
-      vy: 0,
-    }));
-
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Save context and apply transform
+      ctx.save();
+      ctx.translate(transform.x, transform.y);
+      ctx.scale(transform.scale, transform.scale);
+
       // Draw links
       ctx.strokeStyle = '#444';
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1 / transform.scale;
       graphData.links.forEach(link => {
         const source = nodes.find(n => n.id === link.source);
         const target = nodes.find(n => n.id === link.target);
@@ -56,34 +155,44 @@ export function GraphView() {
       nodes.forEach(node => {
         const isCurrentFile = node.id === currentFileId;
         ctx.beginPath();
-        ctx.arc(node.x, node.y, isCurrentFile ? 8 : 6, 0, 2 * Math.PI);
+        const radius = (isCurrentFile ? 8 : 6) / transform.scale;
+        ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI);
         ctx.fillStyle = isCurrentFile ? '#007acc' : '#4fc3f7';
         ctx.fill();
         ctx.strokeStyle = '#e0e0e0';
-        ctx.lineWidth = isCurrentFile ? 2 : 1;
+        ctx.lineWidth = (isCurrentFile ? 2 : 1) / transform.scale;
         ctx.stroke();
 
         // Draw label
         ctx.fillStyle = '#e0e0e0';
-        ctx.font = '12px sans-serif';
-        ctx.fillText(node.name, node.x + 10, node.y + 4);
+        ctx.font = `${12 / transform.scale}px sans-serif`;
+        ctx.fillText(node.name, node.x + 10 / transform.scale, node.y + 4 / transform.scale);
       });
+
+      ctx.restore();
     };
 
     animate();
-  }, [graphData, currentFileId, showGraphView]);
+  }, [graphData, currentFileId, showGraphView, nodes, transform]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const mouseX = (e.clientX - rect.left - transform.x) / transform.scale;
+    const mouseY = (e.clientY - rect.top - transform.y) / transform.scale;
 
-    // Check if clicked on a node (simple distance check)
-    // This would need proper node position tracking in production
-    console.log('Canvas clicked at:', x, y);
+    // Check if clicked on a node
+    nodes.forEach(node => {
+      const distance = Math.sqrt(Math.pow(mouseX - node.x, 2) + Math.pow(mouseY - node.y, 2));
+      const nodeRadius = node.id === currentFileId ? 8 : 6;
+
+      if (distance < nodeRadius) {
+        console.log('Clicked node:', node.name);
+        // TODO: Navigate to file
+      }
+    });
   };
 
   if (!showGraphView) {
@@ -102,7 +211,14 @@ export function GraphView() {
         <canvas
           ref={canvasRef}
           onClick={handleCanvasClick}
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onContextMenu={handleContextMenu}
           className="graph-canvas"
+          style={{ cursor: isPanning ? 'grabbing' : 'default' }}
         />
         {graphData.nodes.length === 0 && (
           <div className="graph-empty">
@@ -114,6 +230,15 @@ export function GraphView() {
       <div className="graph-controls">
         <p className="graph-stats">
           {graphData.nodes.length} notes • {graphData.links.length} connections
+        </p>
+        <div className="graph-zoom-controls">
+          <button onClick={handleReset} className="btn-reset" title="Reset view">
+            Reset
+          </button>
+          <span className="zoom-level">{Math.round(transform.scale * 100)}%</span>
+        </div>
+        <p className="graph-help">
+          Scroll to zoom • Middle-click and drag to pan
         </p>
       </div>
     </div>

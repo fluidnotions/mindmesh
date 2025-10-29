@@ -70,6 +70,9 @@
   padding: 1rem;
   border-top: 1px solid #333;
   background-color: #252526;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .graph-stats {
@@ -77,4 +80,42 @@
   font-size: 0.85rem;
   color: #888;
   text-align: center;
+}
+
+.graph-zoom-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-reset {
+  background-color: #007acc;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.btn-reset:hover {
+  background-color: #005a9e;
+}
+
+.zoom-level {
+  font-size: 0.85rem;
+  color: #4fc3f7;
+  font-weight: 600;
+  min-width: 50px;
+  text-align: center;
+}
+
+.graph-help {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #666;
+  text-align: center;
+  font-style: italic;
 }
