@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NotesApp Embedding Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #4fc3f7;
+    }
+
+    .controls {
+      background: #2d2d2d;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      margin-bottom: 15px;
+    }
+
+    .control-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    .control-group input,
+    .control-group textarea,
+    .control-group select,
+    .control-group button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      background: #1e1e1e;
+      color: #e0e0e0;
+      font-size: 14px;
+    }
+
+    .control-group textarea {
+      resize: vertical;
+      min-height: 100px;
+      font-family: 'Courier New', monospace;
+    }
+
+    button {
+      cursor: pointer;
+      background: #007acc;
+      border: none;
+      color: white;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #005a9e;
+    }
+
+    button:disabled {
+      background: #444;
+      cursor: not-allowed;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button-group button {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    #notes-container {
+      background: #2d2d2d;
+      border-radius: 8px;
+      height: 600px;
+      overflow: hidden;
+      border: 2px solid #444;
+    }
+
+    .event-log {
+      background: #2d2d2d;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .event-log h3 {
+      margin-bottom: 10px;
+      color: #4fc3f7;
+    }
+
+    .event-item {
+      padding: 8px;
+      margin-bottom: 5px;
+      background: #1e1e1e;
+      border-left: 3px solid #4fc3f7;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+
+    .event-item .time {
+      color: #888;
+      font-size: 11px;
+    }
+
+    .stats {
+      background: #2d2d2d;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4fc3f7;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>NotesApp API Example</h1>
+
+    <div class="controls">
+      <h2>Controls</h2>
+
+      <div class="control-group">
+        <label>Mount/Unmount</label>
+        <div class="button-group">
+          <button id="btn-mount">Mount App</button>
+          <button id="btn-unmount" disabled>Unmount App</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>File Name:</label>
+        <input type="text" id="input-filename" placeholder="My New Note" value="Example Note">
+      </div>
+
+      <div class="control-group">
+        <label>File Content:</label>
+        <textarea id="input-content" placeholder="# Markdown content...">## Example Note
+
+This is an example note created via the API.
+
+You can link to other notes using [[Note Name]] syntax.
+
+Try creating another note and linking to it!</textarea>
+      </div>
+
+      <div class="control-group">
+        <div class="button-group">
+          <button id="btn-create-file" disabled>Create File</button>
+          <button id="btn-open-first" disabled>Open First File</button>
+          <button id="btn-export" disabled>Export Workspace</button>
+          <button id="btn-clear" disabled>Clear Workspace</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>View Mode:</label>
+        <div class="button-group">
+          <button id="btn-view-edit" disabled>Edit Mode</button>
+          <button id="btn-view-preview" disabled>Preview Mode</button>
+          <button id="btn-view-split" disabled>Split Mode</button>
+          <button id="btn-toggle-graph" disabled>Toggle Graph</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes App Container -->
+    <div id="notes-container"></div>
+
+    <!-- Statistics -->
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="stat-files">0</div>
+        <div class="stat-label">Files</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-folders">0</div>
+        <div class="stat-label">Folders</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-links">0</div>
+        <div class="stat-label">Links</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-content">0</div>
+        <div class="stat-label">Total Characters</div>
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="event-log">
+      <h3>Event Log</h3>
+      <div id="event-log-content"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import NotesAppFacade
+    // In production, this would be: import { NotesAppFacade } from '@yourorg/notes-app';
+    import { NotesAppFacade, NotesAppEvent } from '../src/api/index.ts';
+
+    let notesApp = null;
+
+    // DOM elements
+    const btnMount = document.getElementById('btn-mount');
+    const btnUnmount = document.getElementById('btn-unmount');
+    const btnCreateFile = document.getElementById('btn-create-file');
+    const btnOpenFirst = document.getElementById('btn-open-first');
+    const btnExport = document.getElementById('btn-export');
+    const btnClear = document.getElementById('btn-clear');
+    const btnViewEdit = document.getElementById('btn-view-edit');
+    const btnViewPreview = document.getElementById('btn-view-preview');
+    const btnViewSplit = document.getElementById('btn-view-split');
+    const btnToggleGraph = document.getElementById('btn-toggle-graph');
+
+    const inputFilename = document.getElementById('input-filename');
+    const inputContent = document.getElementById('input-content');
+    const eventLogContent = document.getElementById('event-log-content');
+
+    // Helper: Add event to log
+    function logEvent(eventName, data) {
+      const time = new Date().toLocaleTimeString();
+      const item = document.createElement('div');
+      item.className = 'event-item';
+      item.innerHTML = `
+        <div class="time">${time}</div>
+        <strong>${eventName}</strong>: ${JSON.stringify(data, null, 2)}
+      `;
+      eventLogContent.insertBefore(item, eventLogContent.firstChild);
+    }
+
+    // Helper: Update stats
+    function updateStats() {
+      if (!notesApp || !notesApp.isMounted()) return;
+
+      const stats = notesApp.getStats();
+      document.getElementById('stat-files').textContent = stats.fileCount;
+      document.getElementById('stat-folders').textContent = stats.folderCount;
+      document.getElementById('stat-links').textContent = stats.linkCount;
+      document.getElementById('stat-content').textContent = stats.totalContentLength.toLocaleString();
+    }
+
+    // Helper: Enable/disable controls
+    function setControlsEnabled(enabled) {
+      btnCreateFile.disabled = !enabled;
+      btnOpenFirst.disabled = !enabled;
+      btnExport.disabled = !enabled;
+      btnClear.disabled = !enabled;
+      btnViewEdit.disabled = !enabled;
+      btnViewPreview.disabled = !enabled;
+      btnViewSplit.disabled = !enabled;
+      btnToggleGraph.disabled = !enabled;
+    }
+
+    // Mount app
+    btnMount.addEventListener('click', () => {
+      notesApp = new NotesAppFacade();
+
+      notesApp.mount(document.getElementById('notes-container'), {
+        initialViewMode: 'split',
+        showGraphButton: true,
+        enableLocalStorage: true,
+        className: 'embedded-notes-app',
+        onReady: () => {
+          console.log('NotesApp mounted and ready!');
+          logEvent('APP_READY', { message: 'App mounted successfully' });
+          updateStats();
+        },
+        onError: (error) => {
+          console.error('NotesApp error:', error);
+          logEvent('ERROR', { message: error.message });
+        },
+      });
+
+      // Subscribe to all events
+      Object.values(NotesAppEvent).forEach(event => {
+        notesApp.on(event, (data) => {
+          logEvent(event, data);
+          updateStats();
+        });
+      });
+
+      // Update UI
+      btnMount.disabled = true;
+      btnUnmount.disabled = false;
+      setControlsEnabled(true);
+    });
+
+    // Unmount app
+    btnUnmount.addEventListener('click', () => {
+      if (notesApp) {
+        notesApp.unmount();
+        notesApp = null;
+        logEvent('APP_UNMOUNTED', { message: 'App unmounted' });
+      }
+
+      btnMount.disabled = false;
+      btnUnmount.disabled = true;
+      setControlsEnabled(false);
+    });
+
+    // Create file
+    btnCreateFile.addEventListener('click', async () => {
+      try {
+        const filename = inputFilename.value || 'Untitled';
+        const content = inputContent.value;
+
+        const file = await notesApp.createFile(
+          filename,
+          `/${filename}`,
+          content
+        );
+
+        console.log('Created file:', file);
+        logEvent('FILE_CREATED_VIA_API', { fileId: file.id, name: file.name });
+
+        // Open the newly created file
+        notesApp.openFile(file.id);
+      } catch (error) {
+        console.error('Error creating file:', error);
+        alert('Error creating file: ' + error.message);
+      }
+    });
+
+    // Open first file
+    btnOpenFirst.addEventListener('click', () => {
+      const files = notesApp.getAllFiles();
+      if (files.length > 0) {
+        notesApp.openFile(files[0].id);
+        logEvent('OPENED_VIA_API', { fileId: files[0].id, name: files[0].name });
+      } else {
+        alert('No files to open');
+      }
+    });
+
+    // Export workspace
+    btnExport.addEventListener('click', () => {
+      const json = notesApp.exportWorkspace();
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `workspace-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      logEvent('WORKSPACE_EXPORTED', { size: json.length });
+    });
+
+    // Clear workspace
+    btnClear.addEventListener('click', async () => {
+      if (confirm('Clear all files and folders?')) {
+        await notesApp.clearWorkspace();
+        logEvent('WORKSPACE_CLEARED', {});
+        updateStats();
+      }
+    });
+
+    // View mode controls
+    btnViewEdit.addEventListener('click', () => notesApp.setViewMode('edit'));
+    btnViewPreview.addEventListener('click', () => notesApp.setViewMode('preview'));
+    btnViewSplit.addEventListener('click', () => notesApp.setViewMode('split'));
+    btnToggleGraph.addEventListener('click', () => notesApp.toggleGraphView());
+
+    // Initial log message
+    logEvent('PAGE_LOADED', { message: 'Click "Mount App" to start' });
+  </script>
+</body>
+</html>
