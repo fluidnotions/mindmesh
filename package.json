@@ -1,5 +1,5 @@
 {
-  "name": "@your-username/obclone",
+  "name": "@fluidnotions/obclone",
   "version": "1.0.0",
   "description": "Obsidian-like note-taking app with wiki links, graph view, and keyword-based linking",
   "type": "module",
