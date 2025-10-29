@@ -1,16 +1,57 @@
 {
-  "name": "obclone",
+  "name": "@your-username/obclone",
   "version": "1.0.0",
+  "description": "Obsidian-like note-taking app with wiki links, graph view, and keyword-based linking",
   "type": "module",
+  "main": "./dist/obclone.umd.js",
+  "module": "./dist/obclone.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/obclone.es.js",
+      "require": "./dist/obclone.umd.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./css": "./dist/obclone.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "notes",
+    "obsidian",
+    "wiki",
+    "markdown",
+    "knowledge-graph",
+    "react"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/obclone.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:lib": "tsc && vite build --config vite.config.lib.ts",
+    "build:all": "npm run build:lib && npm run build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run test:run && npm run build:lib"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.919.0",
@@ -45,6 +86,7 @@
     "jsdom": "^27.0.1",
     "typescript": "^5.2.2",
     "vite": "^5.3.1",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.5"
   }
 }

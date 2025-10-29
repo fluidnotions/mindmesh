@@ -1,0 +1,30 @@
+# Source files
+src/
+public/
+docs/
+
+# Config files
+vite.config.ts
+tsconfig.json
+tsconfig.node.json
+.eslintrc.cjs
+
+# Tests
+**/*.test.ts
+**/*.test.tsx
+__tests__/
+coverage/
+
+# Development
+node_modules/
+.git/
+.github/
+.vscode/
+
+# Build artifacts not for distribution
+index.html
+*.log
+*.tgz
+
+# Worktrees
+*-worktrees/
