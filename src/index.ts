@@ -36,9 +36,9 @@ export { buildGraphData, getConnectedSubgraph } from './services/graphService';
 export { buildKeywordIndex } from './services/linkIndexService';
 export type { KeywordIndex } from './services/linkIndexService';
 
-// Storage backends
-export { DynamoDBStorage, SingleDocumentStorage, IndividualItemsStorage } from './storage';
-export type { StorageBackend, StorageStrategy, WorkspaceMetadata } from './storage';
+// Storage backends and types
+export type { StorageBackend, StorageStrategy, WorkspaceMetadata, Workspace, StorageBackendInfo } from './storage';
+export { StorageError, StorageErrorType } from './storage';
 
 // Utilities
 export { extractLinks, parseLinkReference, hasLink } from './utils/linkParser';

@@ -1,30 +1,29 @@
-// Graph Visualization component - Shows document relationships with zoom and pan
+// Graph Visualization component - Shows document relationships in 3D
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { buildGraphData } from '../../services/graphService';
+import { initializeNodes, simulateForces, Node3D } from '../../services/force3DLayoutService';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import './GraphView.css';
-
-interface GraphNode {
-  id: string;
-  name: string;
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-}
 
 export function GraphView() {
   const { t } = useTranslation();
-  const { files, currentFileId, showGraphView, toggleGraphView, keywordIndex, setCurrentFile } = useApp();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Note: setCurrentFile will be used in Phase 6 for node click navigation
+  const { files, currentFileId, showGraphView, toggleGraphView, keywordIndex } = useApp();
   const [graphData, setGraphData] = React.useState<ReturnType<typeof buildGraphData>>({ nodes: [], links: [] });
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [nodes3D, setNodes3D] = useState<Node3D[]>([]);
 
-  // Pan and zoom state
-  const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
-  const [isPanning, setIsPanning] = useState(false);
-  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
-  const [nodes, setNodes] = useState<GraphNode[]>([]);
+  // Three.js refs
+  const containerRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
+  const nodeMeshesRef = useRef<Map<string, THREE.Mesh>>(new Map());
+  const edgeMeshesRef = useRef<THREE.Mesh[]>([]);
 
   useEffect(() => {
     console.log('[GraphView] Building graph data', {
@@ -41,200 +40,277 @@ export function GraphView() {
     setGraphData(data);
   }, [files, keywordIndex]);
 
-  // Initialize node positions when graph data changes
+  // Initialize Three.js scene
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!containerRef.current || !showGraphView) return;
 
-    const canvas = canvasRef.current;
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(canvas.width, canvas.height) / 3;
+    const container = containerRef.current;
+    const width = container.offsetWidth;
+    const height = container.offsetHeight;
 
-    const initialNodes = graphData.nodes.map((node, index) => {
-      const angle = (index / graphData.nodes.length) * 2 * Math.PI;
-      return {
-        ...node,
-        x: centerX + radius * Math.cos(angle),
-        y: centerY + radius * Math.sin(angle),
-        vx: 0,
-        vy: 0,
-      };
-    });
+    // Scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1e1e1e); // Match existing background
+    sceneRef.current = scene;
 
-    setNodes(initialNodes);
-  }, [graphData.nodes]);
+    // Camera
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+    camera.position.set(0, 0, 50);
+    cameraRef.current = camera;
 
-  // Handle wheel for zoom
-  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    e.preventDefault();
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    // Lighting (enhanced for better node visibility)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
 
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight1.position.set(10, 10, 10);
+    scene.add(directionalLight1);
 
-    // Calculate zoom factor
-    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-    const newScale = Math.max(0.1, Math.min(5, transform.scale * zoomFactor));
+    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+    directionalLight2.position.set(-10, -10, -5);
+    scene.add(directionalLight2);
 
-    // Zoom towards mouse position
-    const scaleDiff = newScale - transform.scale;
-    const newX = transform.x - (mouseX - transform.x) * (scaleDiff / transform.scale);
-    const newY = transform.y - (mouseY - transform.y) * (scaleDiff / transform.scale);
-
-    setTransform({
-      x: newX,
-      y: newY,
-      scale: newScale,
-    });
-  };
-
-  // Handle mouse down for panning (middle button)
-  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // Middle mouse button (button 1)
-    if (e.button === 1) {
-      e.preventDefault();
-      setIsPanning(true);
-      setPanStart({ x: e.clientX - transform.x, y: e.clientY - transform.y });
-    }
-  };
-
-  // Handle mouse move for panning
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (isPanning) {
-      e.preventDefault();
-      setTransform({
-        ...transform,
-        x: e.clientX - panStart.x,
-        y: e.clientY - panStart.y,
-      });
-    }
-  };
-
-  // Handle mouse up
-  const handleMouseUp = () => {
-    setIsPanning(false);
-  };
-
-  // Prevent context menu on middle click
-  const handleContextMenu = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (isPanning) {
-      e.preventDefault();
-    }
-  };
-
-  // Reset zoom and pan
-  const handleReset = () => {
-    setTransform({ x: 0, y: 0, scale: 1 });
-  };
-
-  useEffect(() => {
-    if (!canvasRef.current || !showGraphView) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Set canvas size
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Save context and apply transform
-      ctx.save();
-      ctx.translate(transform.x, transform.y);
-      ctx.scale(transform.scale, transform.scale);
-
-      // Draw links
-      ctx.strokeStyle = '#444';
-      ctx.lineWidth = 1 / transform.scale;
-      graphData.links.forEach(link => {
-        const source = nodes.find(n => n.id === link.source);
-        const target = nodes.find(n => n.id === link.target);
-        if (source && target) {
-          ctx.beginPath();
-          ctx.moveTo(source.x, source.y);
-          ctx.lineTo(target.x, target.y);
-          ctx.stroke();
-        }
-      });
-
-      // Draw nodes
-      nodes.forEach(node => {
-        const isCurrentFile = node.id === currentFileId;
-        ctx.beginPath();
-        const radius = (isCurrentFile ? 8 : 6) / transform.scale;
-        ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = isCurrentFile ? '#007acc' : '#4fc3f7';
-        ctx.fill();
-        ctx.strokeStyle = '#e0e0e0';
-        ctx.lineWidth = (isCurrentFile ? 2 : 1) / transform.scale;
-        ctx.stroke();
-
-        // Draw label
-        ctx.fillStyle = '#e0e0e0';
-        ctx.font = `${12 / transform.scale}px sans-serif`;
-        ctx.fillText(node.name, node.x + 10 / transform.scale, node.y + 4 / transform.scale);
-      });
-
-      ctx.restore();
+    // Add OrbitControls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; // Smooth inertia
+    controls.dampingFactor = 0.05;
+    controls.screenSpacePanning = false; // Keep panning in world space
+    controls.minDistance = 10; // Minimum zoom
+    controls.maxDistance = 200; // Maximum zoom
+    controls.maxPolarAngle = Math.PI; // Allow full rotation
+    controls.mouseButtons = {
+      LEFT: THREE.MOUSE.ROTATE,
+      MIDDLE: THREE.MOUSE.DOLLY,
+      RIGHT: THREE.MOUSE.PAN,
     };
+    controlsRef.current = controls;
 
-    animate();
-  }, [graphData, currentFileId, showGraphView, nodes, transform]);
+    // Render loop with physics simulation
+    let animationId: number;
+    const animate = () => {
+      animationId = requestAnimationFrame(animate);
 
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // Don't navigate if we're panning
-    if (isPanning) return;
+      // Simulate physics for natural 3D spreading
+      if (nodes3D.length > 0) {
+        simulateForces(nodes3D, graphData.links);
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+        // Update mesh positions from physics
+        nodes3D.forEach(node => {
+          const mesh = nodeMeshesRef.current.get(node.id);
+          if (mesh) {
+            mesh.position.copy(node.position);
+          }
+        });
 
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = (e.clientX - rect.left - transform.x) / transform.scale;
-    const mouseY = (e.clientY - rect.top - transform.y) / transform.scale;
+        // Update edge geometries to follow nodes
+        edgeMeshesRef.current.forEach(edgeMesh => {
+          const { source, target } = edgeMesh.userData;
+          const sourceMesh = nodeMeshesRef.current.get(source);
+          const targetMesh = nodeMeshesRef.current.get(target);
 
-    // Check if clicked on a node
-    for (const node of nodes) {
-      const distance = Math.sqrt(Math.pow(mouseX - node.x, 2) + Math.pow(mouseY - node.y, 2));
-      const nodeRadius = (node.id === currentFileId ? 8 : 6) / transform.scale;
-
-      if (distance < nodeRadius * 2) { // Give a larger hit area for easier clicking
-        // Navigate to the clicked file
-        setCurrentFile(node.id);
-        return;
+          if (sourceMesh && targetMesh) {
+            const curve = new THREE.LineCurve3(
+              sourceMesh.position.clone(),
+              targetMesh.position.clone()
+            );
+            edgeMesh.geometry.dispose();
+            edgeMesh.geometry = new THREE.TubeGeometry(curve, 20, 0.1, 8, false);
+          }
+        });
       }
-    }
-  };
+
+      controls.update(); // Required for damping
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    // Handle window resize
+    const handleResize = () => {
+      const width = container.offsetWidth;
+      const height = container.offsetHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationId);
+      controls.dispose();
+      container.removeChild(renderer.domElement);
+      renderer.dispose();
+    };
+  }, [showGraphView, nodes3D, graphData.links]);
+
+  // Initialize 3D nodes with force-directed layout when graph data changes
+  useEffect(() => {
+    const initialNodes = initializeNodes(graphData, currentFileId);
+    setNodes3D(initialNodes);
+  }, [graphData, currentFileId]);
+
+  // Handle fullscreen resize
+  useEffect(() => {
+    if (!containerRef.current || !cameraRef.current || !rendererRef.current) return;
+
+    const container = containerRef.current;
+    const camera = cameraRef.current;
+    const renderer = rendererRef.current;
+
+    // Small delay to let CSS transitions complete
+    setTimeout(() => {
+      const width = container.offsetWidth;
+      const height = container.offsetHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }, 100);
+  }, [isFullscreen]);
+
+  // Add effect to create/update nodes from nodes3D positions
+  useEffect(() => {
+    if (!sceneRef.current || !showGraphView || nodes3D.length === 0) return;
+
+    const scene = sceneRef.current;
+
+    // Clear existing nodes
+    nodeMeshesRef.current.forEach(mesh => {
+      scene.remove(mesh);
+      mesh.geometry.dispose();
+      (mesh.material as THREE.Material).dispose();
+    });
+    nodeMeshesRef.current.clear();
+
+    // Create sphere geometry (shared for all nodes)
+    const nodeGeometry = new THREE.SphereGeometry(1, 32, 32);
+
+    // Create nodes from 3D positions
+    nodes3D.forEach(node => {
+      // Determine if this is the current node
+      const isCurrentNode = node.id === currentFileId;
+
+      // Create material with different color for current node
+      const material = new THREE.MeshStandardMaterial({
+        color: isCurrentNode ? 0x007acc : 0x4fc3f7,
+        emissive: isCurrentNode ? 0x003366 : 0x002233,
+        metalness: 0.3,
+        roughness: 0.7,
+      });
+
+      // Create mesh
+      const sphere = new THREE.Mesh(nodeGeometry, material);
+      sphere.position.copy(node.position);
+
+      // Scale current node larger
+      const scale = isCurrentNode ? 1.5 : 1.0;
+      sphere.scale.setScalar(scale);
+
+      // Store reference with node id as userData
+      sphere.userData = { nodeId: node.id, nodeName: node.name };
+
+      scene.add(sphere);
+      nodeMeshesRef.current.set(node.id, sphere);
+    });
+
+    // Cleanup geometry on unmount
+    return () => {
+      nodeGeometry.dispose();
+    };
+  }, [nodes3D, currentFileId, showGraphView]);
+
+  // Add effect to create/update edges when graphData or nodes change (Phase 4)
+  useEffect(() => {
+    if (!sceneRef.current || !showGraphView || graphData.nodes.length === 0) return;
+
+    const scene = sceneRef.current;
+
+    // Clear existing edges
+    edgeMeshesRef.current.forEach(mesh => {
+      scene.remove(mesh);
+      mesh.geometry.dispose();
+      (mesh.material as THREE.Material).dispose();
+    });
+    edgeMeshesRef.current = [];
+
+    // Create edges
+    graphData.links.forEach(link => {
+      const sourceMesh = nodeMeshesRef.current.get(link.source);
+      const targetMesh = nodeMeshesRef.current.get(link.target);
+
+      if (!sourceMesh || !targetMesh) return;
+
+      // Calculate edge path
+      const sourcePos = sourceMesh.position;
+      const targetPos = targetMesh.position;
+
+      // Create a curve between source and target
+      const curve = new THREE.LineCurve3(
+        sourcePos.clone(),
+        targetPos.clone()
+      );
+
+      // Create tube geometry along the curve
+      const tubeGeometry = new THREE.TubeGeometry(
+        curve,
+        20, // tubular segments
+        0.1, // radius
+        8, // radial segments
+        false // closed
+      );
+
+      // Create material for edge
+      const edgeMaterial = new THREE.MeshStandardMaterial({
+        color: 0x444444,
+        emissive: 0x222222,
+        metalness: 0.2,
+        roughness: 0.8,
+      });
+
+      // Create mesh
+      const tube = new THREE.Mesh(tubeGeometry, edgeMaterial);
+      tube.userData = {
+        source: link.source,
+        target: link.target
+      };
+
+      scene.add(tube);
+      edgeMeshesRef.current.push(tube);
+    });
+  }, [graphData, showGraphView]);
 
   if (!showGraphView) {
     return null;
   }
 
   return (
-    <div className="graph-view">
+    <div className={`graph-view ${isFullscreen ? 'graph-view-fullscreen' : ''}`}>
       <div className="graph-header">
         <h2>{t('graphView.title')}</h2>
-        <button onClick={toggleGraphView} className="btn-close">
-          ×
-        </button>
+        <div className="graph-header-buttons">
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="btn-fullscreen"
+            title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          >
+            {isFullscreen ? '⤓' : '⤢'}
+          </button>
+          <button onClick={toggleGraphView} className="btn-close">
+            ×
+          </button>
+        </div>
       </div>
       <div className="graph-canvas-container">
-        <canvas
-          ref={canvasRef}
-          onClick={handleCanvasClick}
-          onWheel={handleWheel}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onContextMenu={handleContextMenu}
+        <div
+          ref={containerRef}
           className="graph-canvas"
-          style={{ cursor: isPanning ? 'grabbing' : 'default' }}
         />
         {graphData.nodes.length === 0 && (
           <div className="graph-empty">
@@ -247,12 +323,6 @@ export function GraphView() {
         <p className="graph-stats">
           {t('graphView.stats', { noteCount: graphData.nodes.length, linkCount: graphData.links.length })}
         </p>
-        <div className="graph-zoom-controls">
-          <button onClick={handleReset} className="btn-reset" title={t('graphView.reset')}>
-            {t('graphView.reset')}
-          </button>
-          <span className="zoom-level">{Math.round(transform.scale * 100)}%</span>
-        </div>
         <p className="graph-help">
           {t('graphView.zoomHelp')}
         </p>
