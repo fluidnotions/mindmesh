@@ -1,6 +1,5 @@
 // Breadcrumb navigation component
 import { useTranslation } from 'react-i18next';
-import './Breadcrumb.css';
 
 interface BreadcrumbProps {
   path: string;
@@ -31,12 +30,12 @@ export function Breadcrumb({ path, onNavigate }: BreadcrumbProps) {
   const segments = buildSegments(path);
 
   return (
-    <div className="breadcrumb">
+    <div className="flex items-center px-4 py-2 bg-card border-b border-border text-sm overflow-x-auto whitespace-nowrap">
       {segments.map((segment, index) => (
-        <span key={segment.path} className="breadcrumb-segment">
-          {index > 0 && <span className="breadcrumb-separator">/</span>}
+        <span key={segment.path} className="inline-flex items-center">
+          {index > 0 && <span className="mx-2 text-muted-foreground/50">/</span>}
           <span
-            className={`breadcrumb-item ${index === segments.length - 1 ? 'active' : ''}`}
+            className={`px-1 rounded transition-colors ${index === segments.length - 1 ? 'text-foreground font-medium' : 'text-primary hover:bg-secondary cursor-pointer'}`}
             onClick={() => onNavigate && index < segments.length - 1 && onNavigate(segment.path)}
           >
             {segment.name}

@@ -310,10 +310,13 @@ export class MindMeshAPIClient {
         const url = getApiUrl(endpoint);
         const token = await this.getAuthToken();
 
-        const headers: HeadersInit = {
+        const headers: Record<string, string> = {
           'Content-Type': 'application/json',
-          ...options.headers,
         };
+
+        if (options.headers && typeof options.headers === 'object' && !Array.isArray(options.headers)) {
+          Object.assign(headers, options.headers);
+        }
 
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
@@ -360,7 +363,7 @@ export class MindMeshAPIClient {
   /**
    * Load workspace for authenticated user
    */
-  async loadWorkspace(userId: string | null): Promise<Workspace> {
+  async loadWorkspace(_userId: string | null): Promise<Workspace> {
     const response = await this.request<WorkspaceResponse>(API_ENDPOINTS.WORKSPACE, {
       method: 'GET',
     });
@@ -376,7 +379,7 @@ export class MindMeshAPIClient {
   /**
    * Save workspace for authenticated user
    */
-  async saveWorkspace(userId: string | null, workspace: Workspace): Promise<void> {
+  async saveWorkspace(_userId: string | null, workspace: Workspace): Promise<void> {
     // Convert Map to object for JSON serialization
     const workspaceData = {
       files: Object.fromEntries(workspace.files),
@@ -393,7 +396,7 @@ export class MindMeshAPIClient {
   /**
    * Create a new file
    */
-  async createFile(userId: string | null, file: File): Promise<void> {
+  async createFile(_userId: string | null, file: File): Promise<void> {
     await this.request<CreateFileResponse>(API_ENDPOINTS.FILES, {
       method: 'POST',
       body: JSON.stringify({ file }),
@@ -403,7 +406,7 @@ export class MindMeshAPIClient {
   /**
    * Update an existing file
    */
-  async updateFile(userId: string | null, file: File): Promise<void> {
+  async updateFile(_userId: string | null, file: File): Promise<void> {
     await this.request<UpdateFileResponse>(API_ENDPOINTS.FILE_BY_ID(file.id), {
       method: 'PUT',
       body: JSON.stringify({ file }),
@@ -413,7 +416,7 @@ export class MindMeshAPIClient {
   /**
    * Delete a file
    */
-  async deleteFile(userId: string | null, fileId: string): Promise<void> {
+  async deleteFile(_userId: string | null, fileId: string): Promise<void> {
     await this.request<DeleteFileResponse>(API_ENDPOINTS.FILE_BY_ID(fileId), {
       method: 'DELETE',
     });

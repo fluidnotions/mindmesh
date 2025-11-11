@@ -3,7 +3,6 @@ import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { buildTree, TreeNode } from '../../services/fileService';
-import './FileExplorer.css';
 
 export function FileExplorer() {
   const { t } = useTranslation();
@@ -154,31 +153,31 @@ export function FileExplorer() {
 
     if (node.type === 'folder') {
       return (
-        <div key={node.id} className="tree-node-wrapper">
+        <div key={node.id} className="select-none">
           <div
-            className={`tree-node folder ${isExpanded ? 'expanded' : ''}`}
+            className={`flex items-center px-2 py-1 cursor-pointer rounded text-foreground hover:bg-secondary transition-colors ${isActive ? 'bg-primary/20 text-primary' : ''}`}
             style={{ paddingLeft: `${depth * 16 + 8}px` }}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, node)}
           >
             <span
-              className="folder-toggle"
+              className="w-4 inline-flex items-center justify-center text-xs text-muted-foreground cursor-pointer mr-1"
               onClick={() => toggleFolder(node.path)}
             >
               {hasChildren ? (isExpanded ? '▼' : '▶') : '▶'}
             </span>
-            <span className="folder-icon" onClick={() => toggleFolder(node.path)}>
+            <span className="mr-2 text-base cursor-pointer" onClick={() => toggleFolder(node.path)}>
               {isExpanded ? '📂' : '📁'}
             </span>
             <span
-              className="folder-name"
+              className="flex-1 text-sm overflow-hidden text-overflow-ellipsis whitespace-nowrap cursor-pointer"
               onClick={() => toggleFolder(node.path)}
             >
               {node.name}
             </span>
-            <div className="folder-actions">
+            <div className="hidden gap-1 group-hover:flex ml-2">
               <button
-                className="btn-add-file"
+                className="px-2 py-1 bg-secondary text-muted-foreground rounded text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleCreateFile(node.path);
@@ -188,7 +187,7 @@ export function FileExplorer() {
                 +📄
               </button>
               <button
-                className="btn-add-folder"
+                className="px-2 py-1 bg-secondary text-muted-foreground rounded text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleCreateFolder(node.path);
@@ -198,7 +197,7 @@ export function FileExplorer() {
                 +📁
               </button>
               <button
-                className="btn-delete"
+                className="px-2 py-1 bg-secondary text-destructive rounded text-xs hover:bg-destructive hover:text-destructive-foreground transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteFolder(node.id, node.name, node.path);
@@ -210,7 +209,7 @@ export function FileExplorer() {
             </div>
           </div>
           {isExpanded && hasChildren && (
-            <div className="folder-children">
+            <div>
               {node.children!.map((child) => renderTreeNode(child, depth + 1))}
             </div>
           )}
@@ -220,17 +219,17 @@ export function FileExplorer() {
       return (
         <div
           key={node.id}
-          className={`tree-node file ${isActive ? 'active' : ''}`}
+          className={`flex items-center px-2 py-1 cursor-pointer rounded text-foreground hover:bg-secondary transition-colors ${isActive ? 'bg-primary/20 text-primary' : ''}`}
           style={{ paddingLeft: `${depth * 16 + 8}px` }}
           onClick={() => handleFileClick(node.id)}
           draggable
           onDragStart={(e) => handleDragStart(e, node)}
         >
-          <span className="file-indent"></span>
-          <span className="file-icon">📄</span>
-          <span className="file-name">{node.name}</span>
+          <span className="w-4 mr-2"></span>
+          <span className="mr-2 text-sm">📄</span>
+          <span className="flex-1 text-sm overflow-hidden text-overflow-ellipsis whitespace-nowrap">{node.name}</span>
           <button
-            className="btn-delete"
+            className="px-2 py-1 bg-secondary text-destructive rounded text-xs hover:bg-destructive hover:text-destructive-foreground transition-colors ml-2"
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteFile(node.id, node.name);
@@ -270,20 +269,20 @@ export function FileExplorer() {
   const filteredTree = filterTree(tree);
 
   return (
-    <div className="file-explorer">
-      <div className="file-explorer-header">
-        <h2>{t('fileExplorer.title')}</h2>
-        <div className="header-actions">
+    <div className="flex flex-col h-screen bg-background border-r border-border">
+      <div className="p-4 border-b border-border bg-card">
+        <h2 className="text-foreground font-semibold mb-3">{t('fileExplorer.title')}</h2>
+        <div className="flex gap-2">
           <button
             onClick={() => handleCreateFile('/')}
-            className="btn-create"
+            className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90 transition-colors"
             title={t('fileExplorer.newFile')}
           >
             +📄
           </button>
           <button
             onClick={() => handleCreateFolder('/')}
-            className="btn-create"
+            className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm hover:bg-primary/90 transition-colors"
             title={t('fileExplorer.newFolder')}
           >
             +📁
@@ -291,18 +290,19 @@ export function FileExplorer() {
         </div>
       </div>
 
-      <div className="search-box">
+      <div className="px-4 py-2 border-b border-border">
         <input
           type="text"
           placeholder={t('fileExplorer.searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full px-3 py-2 bg-secondary border border-border text-foreground rounded placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
-      <div className="file-tree">
+      <div className="flex-1 overflow-y-auto p-2">
         {filteredTree.length === 0 ? (
-          <div className="empty-state">
+          <div className="p-8 text-center text-muted-foreground text-sm">
             {searchQuery ? t('fileExplorer.noFiles') : t('fileExplorer.noFiles')}
           </div>
         ) : (

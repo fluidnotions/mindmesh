@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  /* Success state colors (green) */
+  --color-success: 76 175 80;  /* #4caf50 in RGB */
+  --color-success-foreground: 255 255 255;
+
+  /* Warning state colors (orange) */
+  --color-warning: 255 152 0;  /* #ff9800 in RGB */
+  --color-warning-foreground: 0 0 0;
+
+  /* All other colors (primary, secondary, background, etc.) */
+  /* are inherited from parent Tailwind theme */
+}
+
+/* Minimal global resets */
+* {
+  box-sizing: border-box;
+}

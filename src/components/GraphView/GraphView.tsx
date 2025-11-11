@@ -6,7 +6,6 @@ import { buildGraphData } from '../../services/graphService';
 import { initializeNodes, simulateForces, Node3D } from '../../services/force3DLayoutService';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import './GraphView.css';
 
 export function GraphView() {
   const { t } = useTranslation();
@@ -291,39 +290,39 @@ export function GraphView() {
   }
 
   return (
-    <div className={`graph-view ${isFullscreen ? 'graph-view-fullscreen' : ''}`}>
-      <div className="graph-header">
-        <h2>{t('graphView.title')}</h2>
-        <div className="graph-header-buttons">
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-background' : 'relative w-full h-full bg-background'}`}>
+      <div className="p-4 border-b border-border bg-card flex justify-between items-center">
+        <h2 className="text-foreground font-semibold">{t('graphView.title')}</h2>
+        <div className="flex gap-2 items-center">
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="btn-fullscreen"
+            className="bg-none border-none text-muted-foreground cursor-pointer text-xl p-0 w-6 h-6 flex items-center justify-center rounded transition-all hover:text-foreground hover:scale-110"
             title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
           >
             {isFullscreen ? '⤓' : '⤢'}
           </button>
-          <button onClick={toggleGraphView} className="btn-close">
+          <button onClick={toggleGraphView} className="bg-none border-none text-muted-foreground cursor-pointer text-2xl p-0 w-6 h-6 flex items-center justify-center rounded transition-all hover:text-foreground hover:scale-110">
             ×
           </button>
         </div>
       </div>
-      <div className="graph-canvas-container">
+      <div className="relative w-full h-full overflow-hidden">
         <div
           ref={containerRef}
-          className="graph-canvas"
+          className="w-full h-full"
         />
         {graphData.nodes.length === 0 && (
-          <div className="graph-empty">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-muted-foreground pointer-events-none">
             <p>{t('graphView.noConnections')}</p>
             <p>{t('graphView.createLinksPrompt')}</p>
           </div>
         )}
       </div>
-      <div className="graph-controls">
-        <p className="graph-stats">
+      <div className="absolute bottom-4 left-4 flex flex-col gap-2 bg-card/90 backdrop-blur p-3 rounded-lg border border-border shadow-lg">
+        <p className="text-xs text-muted-foreground space-y-1">
           {t('graphView.stats', { noteCount: graphData.nodes.length, linkCount: graphData.links.length })}
         </p>
-        <p className="graph-help">
+        <p className="text-xs text-muted-foreground font-italic">
           {t('graphView.zoomHelp')}
         </p>
       </div>

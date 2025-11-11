@@ -1,6 +1,9 @@
 // Main library entry point
 // Export the facade API and React components
 
+// Import Tailwind styles
+import './index.css';
+
 // Main facade API
 export { NotesAppFacade } from './api/NotesAppFacade';
 

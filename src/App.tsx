@@ -7,7 +7,6 @@ import { Editor } from './components/Editor/Editor';
 import { GraphView } from './components/GraphView/GraphView';
 import { LanguageSwitcher } from './components/LanguageSwitcher/LanguageSwitcher';
 import { NotesAppFacade } from './api/NotesAppFacade';
-import './App.css';
 
 interface AppProps {
   facade?: NotesAppFacade;
@@ -39,15 +38,15 @@ function AppContent({ facade }: { facade?: NotesAppFacade }) {
   }, [facade, context]);
 
   return (
-    <div className="app">
-      <div className="app-header">
+    <div className="flex flex-col w-screen h-screen overflow-hidden">
+      <div className="shrink-0 w-full">
         <LanguageSwitcher />
       </div>
-      <div className="app-main">
+      <div className="flex-1 flex overflow-hidden">
         <FileExplorer />
         <Editor />
         <GraphView />
-        <button className="btn-toggle-graph" onClick={toggleGraphView}>
+        <button className="fixed bottom-8 right-8 px-5 py-3 bg-primary text-primary-foreground rounded-lg shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0" onClick={toggleGraphView}>
           📊 {t('graphView.title')}
         </button>
       </div>

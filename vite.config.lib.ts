@@ -5,6 +5,9 @@ import dts from 'vite-plugin-dts';
 
 // Library build configuration
 export default defineConfig({
+  css: {
+    postcss: './postcss.config.js',
+  },
   plugins: [
     react(),
     dts({

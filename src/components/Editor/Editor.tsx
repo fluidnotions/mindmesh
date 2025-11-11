@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { Preview } from '../Preview/Preview';
 import { Breadcrumb } from '../FileExplorer/Breadcrumb';
-import './Editor.css';
 
 export function Editor() {
   const { t } = useTranslation();
@@ -43,8 +42,8 @@ export function Editor() {
 
   if (!currentFile) {
     return (
-      <div className="editor-container">
-        <div className="editor-empty">
+      <div className="flex flex-col h-screen bg-card overflow-hidden">
+        <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
           <p>{t('editor.noFileSelected')}</p>
           <p>{t('editor.selectFilePrompt')}</p>
         </div>
@@ -53,34 +52,34 @@ export function Editor() {
   }
 
   return (
-    <div className="editor-container">
+    <div className="flex flex-col h-screen bg-card overflow-hidden">
       <Breadcrumb path={currentFile.path} />
-      <div className="editor-header">
-        <div className="editor-title">
-          <h1>{currentFile.name}</h1>
+      <div className="p-6 border-b border-border bg-background">
+        <div>
+          <h1 className="text-2xl text-foreground m-0">{currentFile.name}</h1>
         </div>
-        <div className="editor-toolbar">
-          <div className="view-mode-toggle">
+        <div className="mt-4 flex justify-between items-center">
+          <div className="flex gap-2">
             <button
-              className={editorViewMode === 'edit' ? 'active' : ''}
+              className={`px-4 py-2 rounded text-sm transition-colors border ${editorViewMode === 'edit' ? 'bg-primary border-primary text-primary-foreground' : 'bg-secondary text-foreground border-border hover:bg-secondary/80'}`}
               onClick={() => setEditorViewMode('edit')}
             >
               {t('editor.editMode')}
             </button>
             <button
-              className={editorViewMode === 'preview' ? 'active' : ''}
+              className={`px-4 py-2 rounded text-sm transition-colors border ${editorViewMode === 'preview' ? 'bg-primary border-primary text-primary-foreground' : 'bg-secondary text-foreground border-border hover:bg-secondary/80'}`}
               onClick={() => setEditorViewMode('preview')}
             >
               {t('editor.previewMode')}
             </button>
             <button
-              className={editorViewMode === 'split' ? 'active' : ''}
+              className={`px-4 py-2 rounded text-sm transition-colors border ${editorViewMode === 'split' ? 'bg-primary border-primary text-primary-foreground' : 'bg-secondary text-foreground border-border hover:bg-secondary/80'}`}
               onClick={() => setEditorViewMode('split')}
             >
               {t('editor.splitMode')}
             </button>
           </div>
-          <div className={`save-indicator ${saveStatus}`}>
+          <div className={`text-sm ${saveStatus === 'saved' ? 'text-success' : saveStatus === 'saving' ? 'text-warning' : 'text-destructive'}`}>
             {saveStatus === 'saved' && `✓ ${t('editor.saved')}`}
             {saveStatus === 'saving' && `⟳ ${t('editor.saving')}`}
             {saveStatus === 'unsaved' && `● ${t('editor.unsaved')}`}
@@ -88,20 +87,21 @@ export function Editor() {
         </div>
       </div>
 
-      <div className={`editor-content mode-${editorViewMode}`}>
+      <div className={`flex-1 flex overflow-hidden ${editorViewMode === 'split' ? 'grid grid-cols-2' : ''}`}>
         {(editorViewMode === 'edit' || editorViewMode === 'split') && (
-          <div className="editor-pane">
+          <div className="flex-1 flex overflow-hidden">
             <textarea
               value={localContent}
               onChange={handleContentChange}
               placeholder={t('editor.placeholder')}
               spellCheck={false}
+              className="flex-1 p-6 bg-background text-foreground border-none outline-none font-mono text-base leading-relaxed resize-none"
             />
           </div>
         )}
 
         {(editorViewMode === 'preview' || editorViewMode === 'split') && (
-          <div className="preview-pane">
+          <div className="flex-1 overflow-y-auto p-6 bg-card border-l border-border">
             <Preview content={localContent} />
           </div>
         )}

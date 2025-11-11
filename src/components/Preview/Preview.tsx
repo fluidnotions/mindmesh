@@ -6,7 +6,6 @@ import remarkGfm from 'remark-gfm';
 import { useApp } from '../../context/AppContext';
 import { parseLinkReference } from '../../utils/linkParser';
 import { getParentPath } from '../../services/fileService';
-import './Preview.css';
 
 interface PreviewProps {
   content: string;
@@ -92,20 +91,33 @@ export function Preview({ content }: PreviewProps) {
   };
 
   return (
-    <div className="preview" onClick={handleClick}>
+    <div className="flex-1 overflow-y-auto p-6 bg-card text-foreground leading-relaxed max-w-3xl mx-auto" onClick={handleClick}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          h1: ({children}) => <h1 className="text-3xl font-bold mb-4 text-foreground">{children}</h1>,
+          h2: ({children}) => <h2 className="text-2xl font-semibold mb-3 mt-6 text-foreground">{children}</h2>,
+          h3: ({children}) => <h3 className="text-xl font-semibold mb-3 mt-5 text-foreground">{children}</h3>,
+          p: ({children}) => <p className="mb-4 text-foreground">{children}</p>,
+          code: ({children}) => <code className="px-1.5 py-0.5 bg-secondary text-foreground rounded font-mono text-sm">{children}</code>,
+          pre: ({children}) => <pre className="p-4 bg-secondary border border-border rounded overflow-x-auto mb-4 font-mono text-sm">{children}</pre>,
+          blockquote: ({children}) => <blockquote className="pl-4 border-l-4 border-border text-muted-foreground italic my-4">{children}</blockquote>,
+          table: ({children}) => <table className="w-full border-collapse mb-4">{children}</table>,
+          th: ({children}) => <th className="bg-secondary text-foreground font-semibold p-2 border border-border">{children}</th>,
+          td: ({children}) => <td className="p-2 border border-border text-foreground">{children}</td>,
+          ul: ({children}) => <ul className="mb-4 ml-6 list-disc">{children}</ul>,
+          ol: ({children}) => <ol className="mb-4 ml-6 list-decimal">{children}</ol>,
+          li: ({children}) => <li className="mb-2">{children}</li>,
           a: ({ node, href, children, ...props }) => {
             // Check if this is a wiki link
             if (href?.startsWith('wiki:')) {
               const parts = href.split(':');
-              const className = parts[1]; // 'wiki-exists' or 'wiki-missing'
+              const linkType = parts[1]; // 'wiki-exists' or 'wiki-missing'
               const linkRef = parts.slice(2).join(':'); // Original link text
 
               return (
                 <span
-                  className={`wiki-link wiki-link-${className === 'wiki-exists' ? 'exists' : 'missing'}`}
+                  className={`wiki-link font-medium cursor-pointer no-underline ${linkType === 'wiki-exists' ? 'text-blue-400 bg-blue-400/10 px-1 rounded hover:bg-blue-400/20' : 'text-warning bg-warning/10 px-1 rounded hover:bg-warning/20'}`}
                   data-link={linkRef}
                   {...props}
                 >
@@ -114,7 +126,7 @@ export function Preview({ content }: PreviewProps) {
               );
             }
             // Regular markdown link
-            return <a href={href} {...props}>{children}</a>;
+            return <a href={href} className="text-blue-400 no-underline hover:underline" {...props}>{children}</a>;
           },
         }}
       >
