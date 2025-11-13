@@ -12,7 +12,11 @@
       "require": "./dist/mindmesh.umd.js",
       "types": "./dist/index.d.ts"
     },
-    "./css": "./dist/mindmesh.css"
+    "./css": {
+      "import": "./dist/mindmesh.css",
+      "require": "./dist/mindmesh.css"
+    },
+    "./dist/mindmesh.css": "./dist/mindmesh.css"
   },
   "files": [
     "dist",
@@ -50,15 +54,15 @@
     "prepublishOnly": "npm run test:run && npm run build:lib"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "dependencies": {
     "i18next": "^25.6.0",
     "idb": "^8.0.3",
     "pako": "^2.1.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-i18next": "^16.2.1",
     "react-markdown": "^9.0.1",
     "remark-gfm": "^4.0.0",
@@ -72,8 +76,8 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.9.2",
     "@types/pako": "^2.0.4",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
     "@types/three": "^0.160.0",
     "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.13.1",

@@ -1,5 +1,5 @@
 // File Explorer component - Left sidebar with hierarchical file tree
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { buildTree, TreeNode } from '../../services/fileService';
@@ -146,7 +146,7 @@ export function FileExplorer() {
   };
 
   // Render tree node (file or folder)
-  const renderTreeNode = (node: TreeNode, depth: number = 0): JSX.Element => {
+  const renderTreeNode = (node: TreeNode, depth: number = 0): React.ReactElement => {
     const isExpanded = expandedFolders.has(node.path);
     const hasChildren = node.children && node.children.length > 0;
     const isActive = node.type === 'file' && currentFileId === node.id;
